@@ -7,7 +7,9 @@ import {
   DEFAULT_TURN_SECONDS,
   INVITE_LINK_TTL_MINUTES,
   MAX_TIMEOUTS_BEFORE_LOSS,
+  type GameResult,
   type GameSession,
+  type SessionStatus,
   type PlayerRole,
 } from "./types";
 
@@ -153,9 +155,9 @@ export const playMove = createServerFn({ method: "POST" })
 
     const nextState = applyMove(session.state, role, data.cellIndex);
     const now = new Date().toISOString();
-    let status = session.status;
-    let result = session.result;
-    let finishedAt = session.finishedAt;
+    let status: SessionStatus = session.status;
+    let result: GameResult | undefined = session.result;
+    let finishedAt: string | undefined = session.finishedAt;
     if (nextState.winningLine) {
       status = "finished";
       finishedAt = now;
@@ -250,9 +252,9 @@ export const tickTimeout = createServerFn({ method: "POST" })
       currentTurn: role === "host" ? ("player" as const) : ("host" as const),
     };
 
-    let status = session.status;
-    let result = session.result;
-    let finishedAt = session.finishedAt;
+    let status: SessionStatus = session.status;
+    let result: GameResult | undefined = session.result;
+    let finishedAt: string | undefined = session.finishedAt;
     if (hostTimeouts >= MAX_TIMEOUTS_BEFORE_LOSS) {
       status = "finished";
       finishedAt = now;
