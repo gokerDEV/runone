@@ -25,7 +25,7 @@ import { advantage, symbolFor } from "@/lib/games/tictactoe/engine";
 import type { GameSession, PlayerRole, SymbolMark } from "@/lib/games/tictactoe/types";
 import { DEFAULT_TURN_SECONDS } from "@/lib/games/tictactoe/types";
 
-export const Route = createFileRoute("/g/$sessionId")({
+export const Route = createFileRoute("/g/$sessionId/")({
   head: () => ({
     meta: [
       { title: "play.withme · Tic Tac Toe" },
