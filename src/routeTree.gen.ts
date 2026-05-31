@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GSessionIdRouteImport } from './routes/g.$sessionId'
 import { Route as ApiRealtimeConfigRouteImport } from './routes/api/realtime-config'
 import { Route as GSessionIdIndexRouteImport } from './routes/g.$sessionId.index'
 import { Route as GSessionIdResultRouteImport } from './routes/g.$sessionId.result'
@@ -19,15 +20,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GSessionIdRoute = GSessionIdRouteImport.update({
+  id: '/g/$sessionId',
+  path: '/g/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRealtimeConfigRoute = ApiRealtimeConfigRouteImport.update({
   id: '/api/realtime-config',
   path: '/api/realtime-config',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GSessionIdIndexRoute = GSessionIdIndexRouteImport.update({
-  id: '/g/$sessionId/',
-  path: '/g/$sessionId/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => GSessionIdRoute,
 } as any)
 const GSessionIdResultRoute = GSessionIdResultRouteImport.update({
   id: '/result',
@@ -38,6 +44,7 @@ const GSessionIdResultRoute = GSessionIdResultRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
+  '/g/$sessionId': typeof GSessionIdRouteWithChildren
   '/g/$sessionId/result': typeof GSessionIdResultRoute
   '/g/$sessionId/': typeof GSessionIdIndexRoute
 }
@@ -51,6 +58,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
+  '/g/$sessionId': typeof GSessionIdRouteWithChildren
   '/g/$sessionId/result': typeof GSessionIdResultRoute
   '/g/$sessionId/': typeof GSessionIdIndexRoute
 }
@@ -59,6 +67,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/api/realtime-config'
+    | '/g/$sessionId'
     | '/g/$sessionId/result'
     | '/g/$sessionId/'
   fileRoutesByTo: FileRoutesByTo
@@ -67,6 +76,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/api/realtime-config'
+    | '/g/$sessionId'
     | '/g/$sessionId/result'
     | '/g/$sessionId/'
   fileRoutesById: FileRoutesById
@@ -74,7 +84,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiRealtimeConfigRoute: typeof ApiRealtimeConfigRoute
-  GSessionIdIndexRoute: typeof GSessionIdIndexRoute
+  GSessionIdRoute: typeof GSessionIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -86,6 +96,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/g/$sessionId': {
+      id: '/g/$sessionId'
+      path: '/g/$sessionId'
+      fullPath: '/g/$sessionId'
+      preLoaderRoute: typeof GSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/realtime-config': {
       id: '/api/realtime-config'
       path: '/api/realtime-config'
@@ -95,10 +112,10 @@ declare module '@tanstack/react-router' {
     }
     '/g/$sessionId/': {
       id: '/g/$sessionId/'
-      path: '/g/$sessionId'
+      path: '/'
       fullPath: '/g/$sessionId/'
       preLoaderRoute: typeof GSessionIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof GSessionIdRoute
     }
     '/g/$sessionId/result': {
       id: '/g/$sessionId/result'
@@ -110,10 +127,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface GSessionIdRouteChildren {
+  GSessionIdResultRoute: typeof GSessionIdResultRoute
+  GSessionIdIndexRoute: typeof GSessionIdIndexRoute
+}
+
+const GSessionIdRouteChildren: GSessionIdRouteChildren = {
+  GSessionIdResultRoute: GSessionIdResultRoute,
+  GSessionIdIndexRoute: GSessionIdIndexRoute,
+}
+
+const GSessionIdRouteWithChildren = GSessionIdRoute._addFileChildren(
+  GSessionIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiRealtimeConfigRoute: ApiRealtimeConfigRoute,
-  GSessionIdIndexRoute: GSessionIdIndexRoute,
+  GSessionIdRoute: GSessionIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
