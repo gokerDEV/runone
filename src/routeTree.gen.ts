@@ -10,11 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GSessionIdRouteImport } from './routes/g.$sessionId'
 import { Route as ApiRealtimeConfigRouteImport } from './routes/api/realtime-config'
+import { Route as GSessionIdResultRouteImport } from './routes/g.$sessionId.result'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GSessionIdRoute = GSessionIdRouteImport.update({
+  id: '/g/$sessionId',
+  path: '/g/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRealtimeConfigRoute = ApiRealtimeConfigRouteImport.update({
@@ -22,31 +29,52 @@ const ApiRealtimeConfigRoute = ApiRealtimeConfigRouteImport.update({
   path: '/api/realtime-config',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GSessionIdResultRoute = GSessionIdResultRouteImport.update({
+  id: '/result',
+  path: '/result',
+  getParentRoute: () => GSessionIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
+  '/g/$sessionId': typeof GSessionIdRouteWithChildren
+  '/g/$sessionId/result': typeof GSessionIdResultRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
+  '/g/$sessionId': typeof GSessionIdRouteWithChildren
+  '/g/$sessionId/result': typeof GSessionIdResultRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
+  '/g/$sessionId': typeof GSessionIdRouteWithChildren
+  '/g/$sessionId/result': typeof GSessionIdResultRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/realtime-config'
+  fullPaths:
+    | '/'
+    | '/api/realtime-config'
+    | '/g/$sessionId'
+    | '/g/$sessionId/result'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/realtime-config'
-  id: '__root__' | '/' | '/api/realtime-config'
+  to: '/' | '/api/realtime-config' | '/g/$sessionId' | '/g/$sessionId/result'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/realtime-config'
+    | '/g/$sessionId'
+    | '/g/$sessionId/result'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiRealtimeConfigRoute: typeof ApiRealtimeConfigRoute
+  GSessionIdRoute: typeof GSessionIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +86,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/g/$sessionId': {
+      id: '/g/$sessionId'
+      path: '/g/$sessionId'
+      fullPath: '/g/$sessionId'
+      preLoaderRoute: typeof GSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/realtime-config': {
       id: '/api/realtime-config'
       path: '/api/realtime-config'
@@ -65,13 +100,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRealtimeConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/g/$sessionId/result': {
+      id: '/g/$sessionId/result'
+      path: '/result'
+      fullPath: '/g/$sessionId/result'
+      preLoaderRoute: typeof GSessionIdResultRouteImport
+      parentRoute: typeof GSessionIdRoute
+    }
   }
 }
+
+interface GSessionIdRouteChildren {
+  GSessionIdResultRoute: typeof GSessionIdResultRoute
+}
+
+const GSessionIdRouteChildren: GSessionIdRouteChildren = {
+  GSessionIdResultRoute: GSessionIdResultRoute,
+}
+
+const GSessionIdRouteWithChildren = GSessionIdRoute._addFileChildren(
+  GSessionIdRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiRealtimeConfigRoute: ApiRealtimeConfigRoute,
+  GSessionIdRoute: GSessionIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
