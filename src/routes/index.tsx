@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocalProfile } from "@/lib/profile/useLocalProfile";
-import { createSession } from "@/lib/games/tictactoe/session.functions";
-import { DEFAULT_TURN_SECONDS } from "@/lib/games/tictactoe/types";
+import { emptyState } from "@/lib/games/tictactoe/engine";
+import {
+  DEFAULT_TURN_SECONDS,
+  INVITE_LINK_TTL_MINUTES,
+  type GameSession,
+} from "@/lib/games/tictactoe/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,34 +23,46 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
+function newSessionId(): string {
+  return Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 7);
+}
+
 function Landing() {
   const { nickname, setNickname, localUserId, ready } = useLocalProfile();
   const [draftName, setDraftName] = useState("");
   const [timed, setTimed] = useState<"untimed" | "timed">("untimed");
   const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
-  const create = useServerFn(createSession);
 
   const effectiveName = nickname || draftName.trim();
 
-  async function onCreate() {
+  function onCreate() {
     if (!effectiveName) return;
     if (!nickname) setNickname(draftName);
     setCreating(true);
+    const sessionId = newSessionId();
+    const now = new Date();
+    const session: GameSession = {
+      _id: sessionId,
+      gameId: "tic-tac-toe",
+      status: "created",
+      host: { localUserId, nickname: effectiveName },
+      settings: {
+        timingMode: timed,
+        turnSeconds: timed === "timed" ? DEFAULT_TURN_SECONDS : undefined,
+      },
+      state: emptyState(),
+      createdAt: now.toISOString(),
+      expiresAt: new Date(now.getTime() + INVITE_LINK_TTL_MINUTES * 60_000).toISOString(),
+      updatedAt: now.toISOString(),
+    };
     try {
-      const { sessionId } = await create({
-        data: {
-          nickname: effectiveName,
-          localUserId,
-          timingMode: timed,
-          turnSeconds: timed === "timed" ? DEFAULT_TURN_SECONDS : undefined,
-        },
-      });
-      void navigate({ to: "/g/$sessionId", params: { sessionId } });
-    } catch (e) {
-      console.error(e);
-      setCreating(false);
+      localStorage.setItem(`pwm:host:${sessionId}`, "1");
+      localStorage.setItem(`pwm:session:${sessionId}`, JSON.stringify(session));
+    } catch {
+      /* noop */
     }
+    void navigate({ to: "/g/$sessionId", params: { sessionId } });
   }
 
   return (

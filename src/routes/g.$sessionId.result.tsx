@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { GameFrame } from "@/components/GameFrame";
 import { Avatar } from "@/components/Avatar";
 import { useLocalProfile } from "@/lib/profile/useLocalProfile";
-import { getSession } from "@/lib/games/tictactoe/session.functions";
 import {
   MAX_POST_GAME_MESSAGE_LENGTH,
   type GameSession,
@@ -54,7 +52,6 @@ function ResultPage() {
   const { sessionId } = Route.useParams();
   const { localUserId, ready } = useLocalProfile();
   const navigate = useNavigate();
-  const getFn = useServerFn(getSession);
 
   const [session, setSession] = useState<GameSession | null>(null);
   const [moves, setMoves] = useState<ReplayMove[]>([]);
@@ -64,12 +61,16 @@ function ResultPage() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!ready) return;
-    void (async () => {
-      const res = await getFn({ data: { sessionId, localUserId } });
-      if (res.session) setSession(res.session as GameSession);
-    })();
-  }, [ready, sessionId, localUserId, getFn]);
+    if (!ready || typeof window === "undefined") return;
+    const raw = localStorage.getItem(`pwm:session:${sessionId}`);
+    if (raw) {
+      try {
+        setSession(JSON.parse(raw) as GameSession);
+      } catch {
+        /* noop */
+      }
+    }
+  }, [ready, sessionId]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
