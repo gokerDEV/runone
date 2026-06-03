@@ -553,20 +553,40 @@ function GamePage() {
   );
 }
 
-function Header({ onExit }: { onExit: () => void }) {
+function Header({
+  onExit,
+  muted,
+  onToggleMute,
+}: {
+  onExit: () => void;
+  muted?: boolean;
+  onToggleMute?: () => void;
+}) {
   return (
     <div className="flex items-center justify-between px-4 pt-3 pb-1 shrink-0">
       <div className="text-sm font-semibold">
         play.withme <span className="text-muted-foreground font-normal">· TicTacToe</span>
       </div>
-      <button
-        type="button"
-        onClick={onExit}
-        className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center"
-        aria-label="Exit"
-      >
-        <X className="h-5 w-5" />
-      </button>
+      <div className="flex items-center gap-1">
+        {onToggleMute && (
+          <button
+            type="button"
+            onClick={onToggleMute}
+            className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center"
+            aria-label={muted ? "Unmute" : "Mute"}
+          >
+            {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onExit}
+          className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center"
+          aria-label="Exit"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
     </div>
   );
 }
