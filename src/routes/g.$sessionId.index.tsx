@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { X, Copy, Check } from "lucide-react";
+import { X, Copy, Check, Volume2, VolumeX } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GameFrame } from "@/components/GameFrame";
-import { Avatar } from "@/components/Avatar";
+import { Avatar, type ConnStatus } from "@/components/Avatar";
 import { WinnerProgressBar } from "@/components/WinnerProgressBar";
 import { TimeProgressBar } from "@/components/TimeProgressBar";
 import { AdSlot } from "@/components/AdSlot";
@@ -16,6 +17,7 @@ import { useLocalProfile } from "@/lib/profile/useLocalProfile";
 import { useChannel } from "@/lib/realtime/usePusher";
 import { relay } from "@/lib/games/tictactoe/session.functions";
 import { advantage, applyMove, isDraw, symbolFor } from "@/lib/games/tictactoe/engine";
+import { sfx, isMuted, setMuted } from "@/lib/sound";
 import type { GameSession, PlayerRole, SymbolMark } from "@/lib/games/tictactoe/types";
 import { DEFAULT_TURN_SECONDS, MAX_TIMEOUTS_BEFORE_LOSS } from "@/lib/games/tictactoe/types";
 
