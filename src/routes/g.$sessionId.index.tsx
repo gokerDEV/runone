@@ -148,23 +148,8 @@ function GamePage() {
     void broadcast("player:hello", { localUserId, nickname });
   }, [loaded, isHost, nickname, session?.player?.localUserId, localUserId, broadcast]);
 
-  // Reconstruct moves from board when state changes (guest who joined late)
-  useEffect(() => {
-    if (!session) return;
-    setMoves((prev) => {
-      const board = session.state.board;
-      const filled: ReplayMove[] = [];
-      for (let i = 0; i < 9; i++) {
-        const sym = board[i];
-        if (sym) {
-          const existing = prev.find((m) => m.cellIndex === i);
-          if (existing) filled.push(existing);
-          else filled.push({ role: sym === "X" ? "host" : "player", symbol: sym, cellIndex: i });
-        }
-      }
-      return filled;
-    });
-  }, [session?.state.board]);
+  // Note: moves are received via state:update broadcasts to preserve play order.
+
 
   // Persist moves for the result page
   useEffect(() => {
