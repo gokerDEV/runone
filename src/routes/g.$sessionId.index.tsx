@@ -47,10 +47,17 @@ function GamePage() {
   const [copied, setCopied] = useState(false);
   const [moves, setMoves] = useState<ReplayMove[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [muted, setMutedState] = useState(false);
+  const [peerLastSeen, setPeerLastSeen] = useState<number | null>(null);
+  const [now, setNow] = useState(() => Date.now());
   const sessionRef = useRef<GameSession | null>(null);
   sessionRef.current = session;
   const movesRef = useRef<ReplayMove[]>([]);
   movesRef.current = moves;
+  const prevMovesLenRef = useRef(0);
+  const prevPlayerIdRef = useRef<string | null>(null);
+  const peerLastSeenRef = useRef<number | null>(null);
+  peerLastSeenRef.current = peerLastSeen;
 
   const relayFn = useServerFn(relay);
 
