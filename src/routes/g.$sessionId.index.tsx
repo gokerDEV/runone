@@ -240,12 +240,44 @@ function GamePage() {
   }, [moves, sessionId, session]);
 
 
-  // Navigate to result on finish
+  // Finish: sound + toast, then navigate
   useEffect(() => {
-    if (session?.status === "finished") {
-      void navigate({ to: "/g/$sessionId/result", params: { sessionId } });
+    if (session?.status !== "finished" || !session.result) return;
+    const r = session.result;
+    const me = (isHost ? "host" : "player") as PlayerRole;
+    if (r.reason === "draw") {
+      sfx.draw();
+      toast("It's a draw");
+    } else if (r.winnerRole === me) {
+      sfx.win();
+      toast.success("You won!");
+    } else {
+      sfx.lose();
+      toast.error(r.reason === "timeout" ? "You lost on time" : r.reason === "forfeit" ? "Opponent forfeited" : "You lost");
     }
-  }, [session?.status, sessionId, navigate]);
+    const t = window.setTimeout(() => {
+      void navigate({ to: "/g/$sessionId/result", params: { sessionId } });
+    }, 1200);
+    return () => window.clearTimeout(t);
+  }, [session?.status, session?.result, isHost, sessionId, navigate]);
+
+  // Peer connection status
+  const peerStatus: ConnStatus = useMemo(() => {
+    if (!session?.player) return "waiting";
+    if (peerLastSeen === null) return "disconnected";
+    return now - peerLastSeen < 12000 ? "connected" : "disconnected";
+  }, [session?.player, peerLastSeen, now]);
+
+  const hostStatus: ConnStatus = isHost ? "connected" : peerStatus;
+  const playerStatus: ConnStatus = !session?.player ? "waiting" : isHost ? peerStatus : "connected";
+
+  function toggleMute() {
+    const next = !muted;
+    setMutedState(next);
+    setMuted(next);
+    if (!next) sfx.notify();
+  }
+
 
   // Turn timer
   const turnSeconds = session?.settings.turnSeconds ?? DEFAULT_TURN_SECONDS;
