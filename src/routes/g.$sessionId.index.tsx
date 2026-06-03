@@ -126,11 +126,15 @@ function GamePage() {
       void broadcast("state:update", { session: next });
     },
     "state:update": (data) => {
-      const next = (data as { session: GameSession }).session;
+      const payload = data as { session: GameSession; moves?: ReplayMove[] };
+      const next = payload.session;
       setSession((prev) => {
         if (prev && prev.updatedAt > next.updatedAt) return prev;
         return next;
       });
+      if (payload.moves) {
+        setMoves(payload.moves);
+      }
     },
   });
 
