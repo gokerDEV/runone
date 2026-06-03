@@ -47,6 +47,8 @@ function GamePage() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const sessionRef = useRef<GameSession | null>(null);
   sessionRef.current = session;
+  const movesRef = useRef<ReplayMove[]>([]);
+  movesRef.current = moves;
 
   const relayFn = useServerFn(relay);
 
@@ -107,11 +109,11 @@ function GamePage() {
       if (!prev) return;
       // Same guest re-announcing: just resend state.
       if (prev.player && prev.player.localUserId !== hello.localUserId) {
-        void broadcast("state:update", { session: prev });
+        void broadcast("state:update", { session: prev, moves: movesRef.current });
         return;
       }
       if (prev.player && prev.player.localUserId === hello.localUserId) {
-        void broadcast("state:update", { session: prev });
+        void broadcast("state:update", { session: prev, moves: movesRef.current });
         return;
       }
       const now = new Date().toISOString();
@@ -123,14 +125,18 @@ function GamePage() {
         updatedAt: now,
       };
       setSession(next);
-      void broadcast("state:update", { session: next });
+      void broadcast("state:update", { session: next, moves: movesRef.current });
     },
     "state:update": (data) => {
-      const next = (data as { session: GameSession }).session;
+      const payload = data as { session: GameSession; moves?: ReplayMove[] };
+      const next = payload.session;
       setSession((prev) => {
         if (prev && prev.updatedAt > next.updatedAt) return prev;
         return next;
       });
+      if (payload.moves) {
+        setMoves(payload.moves);
+      }
     },
   });
 
@@ -144,23 +150,8 @@ function GamePage() {
     void broadcast("player:hello", { localUserId, nickname });
   }, [loaded, isHost, nickname, session?.player?.localUserId, localUserId, broadcast]);
 
-  // Reconstruct moves from board when state changes (guest who joined late)
-  useEffect(() => {
-    if (!session) return;
-    setMoves((prev) => {
-      const board = session.state.board;
-      const filled: ReplayMove[] = [];
-      for (let i = 0; i < 9; i++) {
-        const sym = board[i];
-        if (sym) {
-          const existing = prev.find((m) => m.cellIndex === i);
-          if (existing) filled.push(existing);
-          else filled.push({ role: sym === "X" ? "host" : "player", symbol: sym, cellIndex: i });
-        }
-      }
-      return filled;
-    });
-  }, [session?.state.board]);
+  // Note: moves are received via state:update broadcasts to preserve play order.
+
 
   // Persist moves for the result page
   useEffect(() => {
@@ -242,7 +233,7 @@ function GamePage() {
       updated.result = { winnerRole: "host", loserRole: "player", reason: "timeout" };
     }
     setSession(updated);
-    void broadcast("state:update", { session: updated });
+    void broadcast("state:update", { session: updated, moves: movesRef.current });
   };
 
   const adv = useMemo(
@@ -261,7 +252,9 @@ function GamePage() {
         return;
       }
       const sym: SymbolMark = symbolFor(role as PlayerRole);
-      setMoves((prev) => [...prev, { role: role as PlayerRole, symbol: sym, cellIndex: i }]);
+      const newMove: ReplayMove = { role: role as PlayerRole, symbol: sym, cellIndex: i };
+      const nextMoves = [...movesRef.current, newMove];
+      setMoves(nextMoves);
       const now = new Date().toISOString();
       const updated: GameSession = { ...session, state: nextState, updatedAt: now };
       if (nextState.winningLine) {
@@ -279,7 +272,7 @@ function GamePage() {
         updated.result = { reason: "draw" };
       }
       setSession(updated);
-      void broadcast("state:update", { session: updated });
+      void broadcast("state:update", { session: updated, moves: nextMoves });
     },
     [isMyTurn, session, role, broadcast],
   );
@@ -313,7 +306,7 @@ function GamePage() {
       result: { winnerRole: winner, loserRole: r, reason: "forfeit" },
     };
     setSession(updated);
-    void broadcast("state:update", { session: updated });
+    void broadcast("state:update", { session: updated, moves: movesRef.current });
   }
 
   if (!ready || !loaded) {
