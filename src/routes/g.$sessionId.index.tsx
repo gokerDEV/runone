@@ -306,7 +306,7 @@ function GamePage() {
       result: { winnerRole: winner, loserRole: r, reason: "forfeit" },
     };
     setSession(updated);
-    void broadcast("state:update", { session: updated });
+    void broadcast("state:update", { session: updated, moves: movesRef.current });
   }
 
   if (!ready || !loaded) {
