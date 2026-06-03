@@ -252,7 +252,9 @@ function GamePage() {
         return;
       }
       const sym: SymbolMark = symbolFor(role as PlayerRole);
-      setMoves((prev) => [...prev, { role: role as PlayerRole, symbol: sym, cellIndex: i }]);
+      const newMove: ReplayMove = { role: role as PlayerRole, symbol: sym, cellIndex: i };
+      const nextMoves = [...movesRef.current, newMove];
+      setMoves(nextMoves);
       const now = new Date().toISOString();
       const updated: GameSession = { ...session, state: nextState, updatedAt: now };
       if (nextState.winningLine) {
@@ -270,7 +272,7 @@ function GamePage() {
         updated.result = { reason: "draw" };
       }
       setSession(updated);
-      void broadcast("state:update", { session: updated });
+      void broadcast("state:update", { session: updated, moves: nextMoves });
     },
     [isMyTurn, session, role, broadcast],
   );
