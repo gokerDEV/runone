@@ -482,18 +482,18 @@ function GamePage() {
 
   return (
     <GameFrame>
-      <Header onExit={() => setExitOpen(true)} />
+      <Header onExit={() => setExitOpen(true)} muted={muted} onToggleMute={toggleMute} />
 
       <div className="grid grid-cols-3 items-center px-4 pt-2">
         <div className="flex flex-col items-center gap-1">
-          <Avatar nickname={session.host.nickname} tone="host" />
+          <Avatar nickname={session.host.nickname} tone="host" status={hostStatus} />
           <span className="text-xs font-semibold truncate max-w-[100px]">{session.host.nickname}</span>
         </div>
         <div className="text-center text-muted-foreground text-sm font-bold">VS</div>
         <div className="flex flex-col items-center gap-1">
           {session.player ? (
             <>
-              <Avatar nickname={session.player.nickname} tone="player" />
+              <Avatar nickname={session.player.nickname} tone="player" status={playerStatus} />
               <span className="text-xs font-semibold truncate max-w-[100px]">{session.player.nickname}</span>
             </>
           ) : (
@@ -504,6 +504,7 @@ function GamePage() {
           )}
         </div>
       </div>
+
 
       <WinnerProgressBar advantage={adv} />
       {session.settings.timingMode === "timed" && remaining !== null && (
