@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { X, Copy, Check } from "lucide-react";
+import { X, Copy, Check, Volume2, VolumeX } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GameFrame } from "@/components/GameFrame";
-import { Avatar } from "@/components/Avatar";
+import { Avatar, type ConnStatus } from "@/components/Avatar";
 import { WinnerProgressBar } from "@/components/WinnerProgressBar";
 import { TimeProgressBar } from "@/components/TimeProgressBar";
 import { AdSlot } from "@/components/AdSlot";
@@ -16,6 +17,7 @@ import { useLocalProfile } from "@/lib/profile/useLocalProfile";
 import { useChannel } from "@/lib/realtime/usePusher";
 import { relay } from "@/lib/games/tictactoe/session.functions";
 import { advantage, applyMove, isDraw, symbolFor } from "@/lib/games/tictactoe/engine";
+import { sfx, isMuted, setMuted } from "@/lib/sound";
 import type { GameSession, PlayerRole, SymbolMark } from "@/lib/games/tictactoe/types";
 import { DEFAULT_TURN_SECONDS, MAX_TIMEOUTS_BEFORE_LOSS } from "@/lib/games/tictactoe/types";
 
@@ -45,10 +47,17 @@ function GamePage() {
   const [copied, setCopied] = useState(false);
   const [moves, setMoves] = useState<ReplayMove[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [muted, setMutedState] = useState(false);
+  const [peerLastSeen, setPeerLastSeen] = useState<number | null>(null);
+  const [now, setNow] = useState(() => Date.now());
   const sessionRef = useRef<GameSession | null>(null);
   sessionRef.current = session;
   const movesRef = useRef<ReplayMove[]>([]);
   movesRef.current = moves;
+  const prevMovesLenRef = useRef(0);
+  const prevPlayerIdRef = useRef<string | null>(null);
+  const peerLastSeenRef = useRef<number | null>(null);
+  peerLastSeenRef.current = peerLastSeen;
 
   const relayFn = useServerFn(relay);
 
@@ -90,7 +99,10 @@ function GamePage() {
 
   // Broadcast helper
   const broadcast = useCallback(
-    async (event: "player:hello" | "state:update" | "game:finished", payload: unknown) => {
+    async (
+      event: "player:hello" | "state:update" | "game:finished" | "peer:ping" | "peer:leave",
+      payload: unknown,
+    ) => {
       try {
         await relayFn({ data: { sessionId, event, payload } });
       } catch (e) {
@@ -100,43 +112,61 @@ function GamePage() {
     [relayFn, sessionId],
   );
 
+  // Init mute state
+  useEffect(() => {
+    setMutedState(isMuted());
+  }, []);
+
   // Realtime
   useChannel(loaded ? `game-${sessionId}` : null, {
     "player:hello": (data) => {
-      if (!isHost) return;
       const hello = data as { localUserId: string; nickname: string };
+      setPeerLastSeen(Date.now());
+      if (!isHost) return;
       const prev = sessionRef.current;
       if (!prev) return;
       // Same guest re-announcing: just resend state.
       if (prev.player && prev.player.localUserId !== hello.localUserId) {
-        void broadcast("state:update", { session: prev, moves: movesRef.current });
+        void broadcast("state:update", { session: prev, moves: movesRef.current, from: localUserId });
         return;
       }
       if (prev.player && prev.player.localUserId === hello.localUserId) {
-        void broadcast("state:update", { session: prev, moves: movesRef.current });
+        void broadcast("state:update", { session: prev, moves: movesRef.current, from: localUserId });
         return;
       }
-      const now = new Date().toISOString();
+      const nowIso = new Date().toISOString();
       const next: GameSession = {
         ...prev,
         player: { localUserId: hello.localUserId, nickname: hello.nickname },
         status: "playing",
-        startedAt: now,
-        updatedAt: now,
+        startedAt: nowIso,
+        updatedAt: nowIso,
       };
       setSession(next);
-      void broadcast("state:update", { session: next, moves: movesRef.current });
+      toast.success(`${hello.nickname} joined`);
+      sfx.join();
+      void broadcast("state:update", { session: next, moves: movesRef.current, from: localUserId });
     },
     "state:update": (data) => {
-      const payload = data as { session: GameSession; moves?: ReplayMove[] };
+      const payload = data as { session: GameSession; moves?: ReplayMove[]; from?: string };
       const next = payload.session;
+      if (payload.from && payload.from !== localUserId) setPeerLastSeen(Date.now());
       setSession((prev) => {
         if (prev && prev.updatedAt > next.updatedAt) return prev;
         return next;
       });
-      if (payload.moves) {
-        setMoves(payload.moves);
-      }
+      if (payload.moves) setMoves(payload.moves);
+    },
+    "peer:ping": (data) => {
+      const p = data as { from: string };
+      if (p.from !== localUserId) setPeerLastSeen(Date.now());
+    },
+    "peer:leave": (data) => {
+      const p = data as { from: string; nickname?: string };
+      if (p.from === localUserId) return;
+      setPeerLastSeen(null);
+      if (p.nickname) toast.warning(`${p.nickname} disconnected`);
+      sfx.leave();
     },
   });
 
@@ -150,8 +180,57 @@ function GamePage() {
     void broadcast("player:hello", { localUserId, nickname });
   }, [loaded, isHost, nickname, session?.player?.localUserId, localUserId, broadcast]);
 
-  // Note: moves are received via state:update broadcasts to preserve play order.
+  // Heartbeat ping every 5s when there's an opponent
+  useEffect(() => {
+    if (!loaded || !session?.player || session.status === "finished") return;
+    const id = window.setInterval(() => {
+      void broadcast("peer:ping", { from: localUserId });
+    }, 5000);
+    void broadcast("peer:ping", { from: localUserId });
+    return () => window.clearInterval(id);
+  }, [loaded, session?.player, session?.status, broadcast, localUserId]);
 
+  // Tick "now" once per second to evaluate peer freshness
+  useEffect(() => {
+    if (!session?.player || session.status === "finished") return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [session?.player, session?.status]);
+
+  // Announce leave on unload
+  useEffect(() => {
+    if (!loaded) return;
+    const handler = () => {
+      try {
+        void broadcast("peer:leave", { from: localUserId, nickname });
+      } catch { /* noop */ }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [loaded, broadcast, localUserId, nickname]);
+
+  // Toasts + sounds on opponent joining / leaving / moves
+  useEffect(() => {
+    const playerId = session?.player?.localUserId ?? null;
+    if (playerId && playerId !== prevPlayerIdRef.current && !isHost && playerId === localUserId) {
+      // We were just admitted — celebrate the connection.
+      toast.success("Connected to host");
+      sfx.join();
+    }
+    prevPlayerIdRef.current = playerId;
+  }, [session?.player?.localUserId, isHost, localUserId]);
+
+  useEffect(() => {
+    const len = moves.length;
+    const prev = prevMovesLenRef.current;
+    if (len > prev) {
+      const last = moves[len - 1];
+      const mine = last.role === (isHost ? "host" : "player");
+      if (mine) sfx.move();
+      else sfx.opponentMove();
+    }
+    prevMovesLenRef.current = len;
+  }, [moves, isHost]);
 
   // Persist moves for the result page
   useEffect(() => {
@@ -160,12 +239,45 @@ function GamePage() {
     }
   }, [moves, sessionId, session]);
 
-  // Navigate to result on finish
+
+  // Finish: sound + toast, then navigate
   useEffect(() => {
-    if (session?.status === "finished") {
-      void navigate({ to: "/g/$sessionId/result", params: { sessionId } });
+    if (session?.status !== "finished" || !session.result) return;
+    const r = session.result;
+    const me = (isHost ? "host" : "player") as PlayerRole;
+    if (r.reason === "draw") {
+      sfx.draw();
+      toast("It's a draw");
+    } else if (r.winnerRole === me) {
+      sfx.win();
+      toast.success("You won!");
+    } else {
+      sfx.lose();
+      toast.error(r.reason === "timeout" ? "You lost on time" : r.reason === "forfeit" ? "Opponent forfeited" : "You lost");
     }
-  }, [session?.status, sessionId, navigate]);
+    const t = window.setTimeout(() => {
+      void navigate({ to: "/g/$sessionId/result", params: { sessionId } });
+    }, 1200);
+    return () => window.clearTimeout(t);
+  }, [session?.status, session?.result, isHost, sessionId, navigate]);
+
+  // Peer connection status
+  const peerStatus: ConnStatus = useMemo(() => {
+    if (!session?.player) return "waiting";
+    if (peerLastSeen === null) return "disconnected";
+    return now - peerLastSeen < 12000 ? "connected" : "disconnected";
+  }, [session?.player, peerLastSeen, now]);
+
+  const hostStatus: ConnStatus = isHost ? "connected" : peerStatus;
+  const playerStatus: ConnStatus = !session?.player ? "waiting" : isHost ? peerStatus : "connected";
+
+  function toggleMute() {
+    const next = !muted;
+    setMutedState(next);
+    setMuted(next);
+    if (!next) sfx.notify();
+  }
+
 
   // Turn timer
   const turnSeconds = session?.settings.turnSeconds ?? DEFAULT_TURN_SECONDS;
@@ -233,7 +345,7 @@ function GamePage() {
       updated.result = { winnerRole: "host", loserRole: "player", reason: "timeout" };
     }
     setSession(updated);
-    void broadcast("state:update", { session: updated, moves: movesRef.current });
+    void broadcast("state:update", { session: updated, moves: movesRef.current, from: localUserId });
   };
 
   const adv = useMemo(
@@ -272,7 +384,7 @@ function GamePage() {
         updated.result = { reason: "draw" };
       }
       setSession(updated);
-      void broadcast("state:update", { session: updated, moves: nextMoves });
+      void broadcast("state:update", { session: updated, moves: nextMoves, from: localUserId });
     },
     [isMyTurn, session, role, broadcast],
   );
@@ -306,7 +418,7 @@ function GamePage() {
       result: { winnerRole: winner, loserRole: r, reason: "forfeit" },
     };
     setSession(updated);
-    void broadcast("state:update", { session: updated, moves: movesRef.current });
+    void broadcast("state:update", { session: updated, moves: movesRef.current, from: localUserId });
   }
 
   if (!ready || !loaded) {
@@ -370,18 +482,18 @@ function GamePage() {
 
   return (
     <GameFrame>
-      <Header onExit={() => setExitOpen(true)} />
+      <Header onExit={() => setExitOpen(true)} muted={muted} onToggleMute={toggleMute} />
 
       <div className="grid grid-cols-3 items-center px-4 pt-2">
         <div className="flex flex-col items-center gap-1">
-          <Avatar nickname={session.host.nickname} tone="host" />
+          <Avatar nickname={session.host.nickname} tone="host" status={hostStatus} />
           <span className="text-xs font-semibold truncate max-w-[100px]">{session.host.nickname}</span>
         </div>
         <div className="text-center text-muted-foreground text-sm font-bold">VS</div>
         <div className="flex flex-col items-center gap-1">
           {session.player ? (
             <>
-              <Avatar nickname={session.player.nickname} tone="player" />
+              <Avatar nickname={session.player.nickname} tone="player" status={playerStatus} />
               <span className="text-xs font-semibold truncate max-w-[100px]">{session.player.nickname}</span>
             </>
           ) : (
@@ -392,6 +504,7 @@ function GamePage() {
           )}
         </div>
       </div>
+
 
       <WinnerProgressBar advantage={adv} />
       {session.settings.timingMode === "timed" && remaining !== null && (
@@ -440,20 +553,40 @@ function GamePage() {
   );
 }
 
-function Header({ onExit }: { onExit: () => void }) {
+function Header({
+  onExit,
+  muted,
+  onToggleMute,
+}: {
+  onExit: () => void;
+  muted?: boolean;
+  onToggleMute?: () => void;
+}) {
   return (
     <div className="flex items-center justify-between px-4 pt-3 pb-1 shrink-0">
       <div className="text-sm font-semibold">
         play.withme <span className="text-muted-foreground font-normal">· TicTacToe</span>
       </div>
-      <button
-        type="button"
-        onClick={onExit}
-        className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center"
-        aria-label="Exit"
-      >
-        <X className="h-5 w-5" />
-      </button>
+      <div className="flex items-center gap-1">
+        {onToggleMute && (
+          <button
+            type="button"
+            onClick={onToggleMute}
+            className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center"
+            aria-label={muted ? "Unmute" : "Mute"}
+          >
+            {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onExit}
+          className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center"
+          aria-label="Exit"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
     </div>
   );
 }
