@@ -99,7 +99,10 @@ function GamePage() {
 
   // Broadcast helper
   const broadcast = useCallback(
-    async (event: "player:hello" | "state:update" | "game:finished", payload: unknown) => {
+    async (
+      event: "player:hello" | "state:update" | "game:finished" | "peer:ping" | "peer:leave",
+      payload: unknown,
+    ) => {
       try {
         await relayFn({ data: { sessionId, event, payload } });
       } catch (e) {
@@ -109,11 +112,17 @@ function GamePage() {
     [relayFn, sessionId],
   );
 
+  // Init mute state
+  useEffect(() => {
+    setMutedState(isMuted());
+  }, []);
+
   // Realtime
   useChannel(loaded ? `game-${sessionId}` : null, {
     "player:hello": (data) => {
-      if (!isHost) return;
       const hello = data as { localUserId: string; nickname: string };
+      setPeerLastSeen(Date.now());
+      if (!isHost) return;
       const prev = sessionRef.current;
       if (!prev) return;
       // Same guest re-announcing: just resend state.
@@ -125,27 +134,39 @@ function GamePage() {
         void broadcast("state:update", { session: prev, moves: movesRef.current });
         return;
       }
-      const now = new Date().toISOString();
+      const nowIso = new Date().toISOString();
       const next: GameSession = {
         ...prev,
         player: { localUserId: hello.localUserId, nickname: hello.nickname },
         status: "playing",
-        startedAt: now,
-        updatedAt: now,
+        startedAt: nowIso,
+        updatedAt: nowIso,
       };
       setSession(next);
+      toast.success(`${hello.nickname} joined`);
+      sfx.join();
       void broadcast("state:update", { session: next, moves: movesRef.current });
     },
     "state:update": (data) => {
-      const payload = data as { session: GameSession; moves?: ReplayMove[] };
+      const payload = data as { session: GameSession; moves?: ReplayMove[]; from?: string };
       const next = payload.session;
+      if (payload.from && payload.from !== localUserId) setPeerLastSeen(Date.now());
       setSession((prev) => {
         if (prev && prev.updatedAt > next.updatedAt) return prev;
         return next;
       });
-      if (payload.moves) {
-        setMoves(payload.moves);
-      }
+      if (payload.moves) setMoves(payload.moves);
+    },
+    "peer:ping": (data) => {
+      const p = data as { from: string };
+      if (p.from !== localUserId) setPeerLastSeen(Date.now());
+    },
+    "peer:leave": (data) => {
+      const p = data as { from: string; nickname?: string };
+      if (p.from === localUserId) return;
+      setPeerLastSeen(null);
+      if (p.nickname) toast.warning(`${p.nickname} disconnected`);
+      sfx.leave();
     },
   });
 
@@ -159,8 +180,57 @@ function GamePage() {
     void broadcast("player:hello", { localUserId, nickname });
   }, [loaded, isHost, nickname, session?.player?.localUserId, localUserId, broadcast]);
 
-  // Note: moves are received via state:update broadcasts to preserve play order.
+  // Heartbeat ping every 5s when there's an opponent
+  useEffect(() => {
+    if (!loaded || !session?.player || session.status === "finished") return;
+    const id = window.setInterval(() => {
+      void broadcast("peer:ping", { from: localUserId });
+    }, 5000);
+    void broadcast("peer:ping", { from: localUserId });
+    return () => window.clearInterval(id);
+  }, [loaded, session?.player, session?.status, broadcast, localUserId]);
 
+  // Tick "now" once per second to evaluate peer freshness
+  useEffect(() => {
+    if (!session?.player || session.status === "finished") return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [session?.player, session?.status]);
+
+  // Announce leave on unload
+  useEffect(() => {
+    if (!loaded) return;
+    const handler = () => {
+      try {
+        void broadcast("peer:leave", { from: localUserId, nickname });
+      } catch { /* noop */ }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [loaded, broadcast, localUserId, nickname]);
+
+  // Toasts + sounds on opponent joining / leaving / moves
+  useEffect(() => {
+    const playerId = session?.player?.localUserId ?? null;
+    if (playerId && playerId !== prevPlayerIdRef.current && !isHost && playerId === localUserId) {
+      // We were just admitted — celebrate the connection.
+      toast.success("Connected to host");
+      sfx.join();
+    }
+    prevPlayerIdRef.current = playerId;
+  }, [session?.player?.localUserId, isHost, localUserId]);
+
+  useEffect(() => {
+    const len = moves.length;
+    const prev = prevMovesLenRef.current;
+    if (len > prev) {
+      const last = moves[len - 1];
+      const mine = last.role === (isHost ? "host" : "player");
+      if (mine) sfx.move();
+      else sfx.opponentMove();
+    }
+    prevMovesLenRef.current = len;
+  }, [moves, isHost]);
 
   // Persist moves for the result page
   useEffect(() => {
@@ -168,6 +238,7 @@ function GamePage() {
       window.sessionStorage.setItem(`pwm:moves:${sessionId}`, JSON.stringify(moves));
     }
   }, [moves, sessionId, session]);
+
 
   // Navigate to result on finish
   useEffect(() => {
