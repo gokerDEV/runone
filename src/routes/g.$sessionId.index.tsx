@@ -233,7 +233,7 @@ function GamePage() {
       updated.result = { winnerRole: "host", loserRole: "player", reason: "timeout" };
     }
     setSession(updated);
-    void broadcast("state:update", { session: updated });
+    void broadcast("state:update", { session: updated, moves: movesRef.current });
   };
 
   const adv = useMemo(
