@@ -5,7 +5,7 @@ import { pusherTrigger } from "@/lib/realtime/pusher.server";
 
 const RelaySchema = z.object({
   sessionId: z.string().min(4).max(64),
-  event: z.enum(["player:hello", "state:update", "game:finished"]),
+  event: z.enum(["player:hello", "state:update", "game:finished", "peer:ping", "peer:leave"]),
   payload: z.unknown(),
 });
 
