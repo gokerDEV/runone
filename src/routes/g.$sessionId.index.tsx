@@ -109,11 +109,11 @@ function GamePage() {
       if (!prev) return;
       // Same guest re-announcing: just resend state.
       if (prev.player && prev.player.localUserId !== hello.localUserId) {
-        void broadcast("state:update", { session: prev });
+        void broadcast("state:update", { session: prev, moves: movesRef.current });
         return;
       }
       if (prev.player && prev.player.localUserId === hello.localUserId) {
-        void broadcast("state:update", { session: prev });
+        void broadcast("state:update", { session: prev, moves: movesRef.current });
         return;
       }
       const now = new Date().toISOString();
@@ -125,7 +125,7 @@ function GamePage() {
         updatedAt: now,
       };
       setSession(next);
-      void broadcast("state:update", { session: next });
+      void broadcast("state:update", { session: next, moves: movesRef.current });
     },
     "state:update": (data) => {
       const payload = data as { session: GameSession; moves?: ReplayMove[] };
