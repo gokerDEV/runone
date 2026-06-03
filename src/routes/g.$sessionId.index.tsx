@@ -47,6 +47,8 @@ function GamePage() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const sessionRef = useRef<GameSession | null>(null);
   sessionRef.current = session;
+  const movesRef = useRef<ReplayMove[]>([]);
+  movesRef.current = moves;
 
   const relayFn = useServerFn(relay);
 
