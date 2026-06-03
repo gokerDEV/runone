@@ -313,7 +313,7 @@ function GamePage() {
       updated.result = { winnerRole: "host", loserRole: "player", reason: "timeout" };
     }
     setSession(updated);
-    void broadcast("state:update", { session: updated, moves: movesRef.current });
+    void broadcast("state:update", { session: updated, moves: movesRef.current, from: localUserId });
   };
 
   const adv = useMemo(
@@ -352,7 +352,7 @@ function GamePage() {
         updated.result = { reason: "draw" };
       }
       setSession(updated);
-      void broadcast("state:update", { session: updated, moves: nextMoves });
+      void broadcast("state:update", { session: updated, moves: nextMoves, from: localUserId });
     },
     [isMyTurn, session, role, broadcast],
   );
@@ -386,7 +386,7 @@ function GamePage() {
       result: { winnerRole: winner, loserRole: r, reason: "forfeit" },
     };
     setSession(updated);
-    void broadcast("state:update", { session: updated, moves: movesRef.current });
+    void broadcast("state:update", { session: updated, moves: movesRef.current, from: localUserId });
   }
 
   if (!ready || !loaded) {
