@@ -269,6 +269,24 @@ function GamePage() {
     return now - peerLastSeen < 12000 ? "connected" : "disconnected";
   }, [session?.player, peerLastSeen, now]);
 
+  // Connect / disconnect / reconnect sounds + toasts
+  useEffect(() => {
+    if (!session?.player) return;
+    const connected = peerStatus === "connected";
+    if (prevPeerConnectedRef.current === null) {
+      prevPeerConnectedRef.current = connected;
+      return;
+    }
+    if (prevPeerConnectedRef.current && !connected) {
+      sfx.disconnect();
+      toast.warning("Connection lost");
+    } else if (!prevPeerConnectedRef.current && connected) {
+      sfx.reconnect();
+      toast.success("Reconnected");
+    }
+    prevPeerConnectedRef.current = connected;
+  }, [peerStatus, session?.player]);
+
   const hostStatus: ConnStatus = isHost ? "connected" : peerStatus;
   const playerStatus: ConnStatus = !session?.player ? "waiting" : isHost ? peerStatus : "connected";
 
@@ -395,6 +413,7 @@ function GamePage() {
   async function onCopy() {
     try {
       await navigator.clipboard.writeText(inviteUrl);
+      sfx.copy();
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
