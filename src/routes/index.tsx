@@ -10,14 +10,16 @@ import {
   INVITE_LINK_TTL_MINUTES,
   type GameSession,
 } from "@/lib/games/tictactoe/types";
+import { startingState as bgStartingState } from "@/lib/games/backgammon/engine";
+import type { BgSession } from "@/lib/games/backgammon/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "play.withme — Play with ME" },
-      { name: "description", content: "Play Tic Tac Toe with a friend and share a vertical replay video." },
+      { name: "description", content: "Play Tic Tac Toe or Backgammon with a friend and share a vertical replay video." },
       { property: "og:title", content: "play.withme" },
-      { property: "og:description", content: "Play with ME — two-player Tic Tac Toe with shareable replays." },
+      { property: "og:description", content: "Play with ME — multiplayer board games with shareable replays." },
     ],
   }),
   component: Landing,
@@ -27,9 +29,12 @@ function newSessionId(): string {
   return Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 7);
 }
 
+type GameKind = "tic-tac-toe" | "backgammon";
+
 function Landing() {
   const { nickname, setNickname, localUserId, ready } = useLocalProfile();
   const [draftName, setDraftName] = useState("");
+  const [gameKind, setGameKind] = useState<GameKind>("tic-tac-toe");
   const [timed, setTimed] = useState<"untimed" | "timed">("untimed");
   const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
@@ -42,27 +47,42 @@ function Landing() {
     setCreating(true);
     const sessionId = newSessionId();
     const now = new Date();
-    const session: GameSession = {
-      _id: sessionId,
-      gameId: "tic-tac-toe",
-      status: "created",
-      host: { localUserId, nickname: effectiveName },
-      settings: {
-        timingMode: timed,
-        turnSeconds: timed === "timed" ? DEFAULT_TURN_SECONDS : undefined,
-      },
-      state: emptyState(),
-      createdAt: now.toISOString(),
-      expiresAt: new Date(now.getTime() + INVITE_LINK_TTL_MINUTES * 60_000).toISOString(),
-      updatedAt: now.toISOString(),
-    };
-    try {
-      localStorage.setItem(`pwm:host:${sessionId}`, "1");
-      localStorage.setItem(`pwm:session:${sessionId}`, JSON.stringify(session));
-    } catch {
-      /* noop */
+    if (gameKind === "tic-tac-toe") {
+      const session: GameSession = {
+        _id: sessionId,
+        gameId: "tic-tac-toe",
+        status: "created",
+        host: { localUserId, nickname: effectiveName },
+        settings: {
+          timingMode: timed,
+          turnSeconds: timed === "timed" ? DEFAULT_TURN_SECONDS : undefined,
+        },
+        state: emptyState(),
+        createdAt: now.toISOString(),
+        expiresAt: new Date(now.getTime() + INVITE_LINK_TTL_MINUTES * 60_000).toISOString(),
+        updatedAt: now.toISOString(),
+      };
+      try {
+        localStorage.setItem(`pwm:host:${sessionId}`, "1");
+        localStorage.setItem(`pwm:session:${sessionId}`, JSON.stringify(session));
+      } catch { /* noop */ }
+      void navigate({ to: "/g/$sessionId", params: { sessionId } });
+    } else {
+      const session: BgSession = {
+        _id: sessionId,
+        gameId: "backgammon",
+        status: "created",
+        host: { localUserId, nickname: effectiveName },
+        state: bgStartingState(),
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+      };
+      try {
+        localStorage.setItem(`pwm:bg-host:${sessionId}`, "1");
+        localStorage.setItem(`pwm:bg-session:${sessionId}`, JSON.stringify(session));
+      } catch { /* noop */ }
+      void navigate({ to: "/b/$sessionId", params: { sessionId } });
     }
-    void navigate({ to: "/g/$sessionId", params: { sessionId } });
   }
 
   return (
@@ -80,9 +100,7 @@ function Landing() {
               <Input
                 id="nick"
                 value={nickname || draftName}
-                onChange={(e) =>
-                  nickname ? setNickname(e.target.value) : setDraftName(e.target.value)
-                }
+                onChange={(e) => (nickname ? setNickname(e.target.value) : setDraftName(e.target.value))}
                 placeholder="Enter your nickname"
                 className="bg-white/10 border-white/20 text-white"
                 maxLength={24}
@@ -91,28 +109,45 @@ function Landing() {
 
             <div className="flex flex-col gap-2">
               <Label className="text-white/80">Game</Label>
-              <div className="bg-white/10 rounded-md px-3 py-2 text-sm">Tic Tac Toe</div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label className="text-white/80">Timing</Label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => setTimed("untimed")}
-                  className={`rounded-md py-2 text-sm font-medium ${timed === "untimed" ? "bg-indigo-500 text-white" : "bg-white/10 text-white/70"}`}
+                  onClick={() => setGameKind("tic-tac-toe")}
+                  className={`rounded-md py-3 text-sm font-semibold ${gameKind === "tic-tac-toe" ? "bg-indigo-500 text-white" : "bg-white/10 text-white/70"}`}
                 >
-                  Untimed
+                  Tic Tac Toe
                 </button>
                 <button
                   type="button"
-                  onClick={() => setTimed("timed")}
-                  className={`rounded-md py-2 text-sm font-medium ${timed === "timed" ? "bg-indigo-500 text-white" : "bg-white/10 text-white/70"}`}
+                  onClick={() => setGameKind("backgammon")}
+                  className={`rounded-md py-3 text-sm font-semibold ${gameKind === "backgammon" ? "bg-indigo-500 text-white" : "bg-white/10 text-white/70"}`}
                 >
-                  {DEFAULT_TURN_SECONDS}s / turn
+                  Backgammon
                 </button>
               </div>
             </div>
+
+            {gameKind === "tic-tac-toe" && (
+              <div className="flex flex-col gap-2">
+                <Label className="text-white/80">Timing</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setTimed("untimed")}
+                    className={`rounded-md py-2 text-sm font-medium ${timed === "untimed" ? "bg-indigo-500 text-white" : "bg-white/10 text-white/70"}`}
+                  >
+                    Untimed
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTimed("timed")}
+                    className={`rounded-md py-2 text-sm font-medium ${timed === "timed" ? "bg-indigo-500 text-white" : "bg-white/10 text-white/70"}`}
+                  >
+                    {DEFAULT_TURN_SECONDS}s / turn
+                  </button>
+                </div>
+              </div>
+            )}
 
             <Button
               size="lg"
