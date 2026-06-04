@@ -56,6 +56,7 @@ function GamePage() {
   movesRef.current = moves;
   const prevMovesLenRef = useRef(0);
   const prevPlayerIdRef = useRef<string | null>(null);
+  const prevPeerConnectedRef = useRef<boolean | null>(null);
   const peerLastSeenRef = useRef<number | null>(null);
   peerLastSeenRef.current = peerLastSeen;
 

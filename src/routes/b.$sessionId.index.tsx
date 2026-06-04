@@ -442,7 +442,7 @@ function BgPage() {
             {session.status === "finished"
               ? "Game over"
               : isMyTurn
-              ? state(session.state.rolled ? "Your turn — move" : "Your turn — roll or double")
+              ? session.state.rolled ? "Your turn — move" : "Your turn — roll or double"
               : "Opponent's turn"}
           </p>
         )}
@@ -475,8 +475,6 @@ function BgPage() {
     </GameFrame>
   );
 }
-
-function state(s: string) { return s; }
 
 function Header({ onExit, muted, onToggleMute }: { onExit: () => void; muted?: boolean; onToggleMute?: () => void }) {
   return (
