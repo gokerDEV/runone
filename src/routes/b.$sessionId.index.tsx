@@ -84,9 +84,20 @@ function BgPage() {
     if (session && typeof window !== "undefined") {
       try {
         localStorage.setItem(`pwm:bg-session:${sessionId}`, JSON.stringify(session));
+        // Append snapshot if state changed
+        const key = `pwm:bg-snaps:${sessionId}`;
+        const raw = window.sessionStorage.getItem(key);
+        const arr: unknown[] = raw ? (JSON.parse(raw) as unknown[]) : [];
+        const last = arr[arr.length - 1] as { _t?: string } | undefined;
+        if (!last || last._t !== session.updatedAt) {
+          arr.push({ ...session.state, _t: session.updatedAt });
+          if (arr.length > 400) arr.splice(0, arr.length - 400);
+          window.sessionStorage.setItem(key, JSON.stringify(arr));
+        }
       } catch { /* noop */ }
     }
   }, [session, sessionId]);
+
 
   const role: Role = useMemo(() => {
     if (!loaded) return "missing";
