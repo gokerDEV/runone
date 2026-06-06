@@ -90,20 +90,23 @@ function ReplayPage() {
     setIsExporting(true);
     setExportProgress(0);
 
+    // Wait for React to unmount controls and DOM to expand to 9:16 layout
+    await new Promise(r => setTimeout(r, 200));
+
     try {
-      const width = containerRef.current.offsetWidth || 400;
-      const height = containerRef.current.offsetHeight || 800;
+      const width = containerRef.current.offsetWidth || 800;
 
       // WebCodecs H264 requires dimensions to be even numbers
-      const encWidth = width % 2 === 0 ? width : width + 1;
-      const encHeight = height % 2 === 0 ? height : height + 1;
+      const outW = width % 2 === 0 ? width : width + 1;
+      const rawOutH = Math.round((outW * 16) / 9);
+      const outH = rawOutH % 2 === 0 ? rawOutH : rawOutH + 1;
 
       const muxer = new Muxer({
         target: new ArrayBufferTarget(),
         video: {
           codec: 'avc',
-          width: encWidth,
-          height: encHeight,
+          width: outW,
+          height: outH,
         },
         fastStart: 'in-memory',
       });
@@ -115,8 +118,8 @@ function ReplayPage() {
 
       videoEncoder.configure({
         codec: 'avc1.420028',
-        width: encWidth,
-        height: encHeight,
+        width: outW,
+        height: outH,
         bitrate: 2_000_000,
         framerate: 30,
       });
@@ -139,8 +142,8 @@ function ReplayPage() {
         setExportProgress((i / totalEvents) * 0.8);
 
         const canvas = await toCanvas(containerRef.current, {
-          width: encWidth,
-          height: encHeight,
+          width: outW,
+          height: outH,
           backgroundColor: "#ffffff",
           pixelRatio: 1,
           style: {
@@ -150,24 +153,7 @@ function ReplayPage() {
         });
         lastBoardCanvas = canvas;
 
-        // We ensure the output is exactly 9:16
-        const outCanvas = document.createElement("canvas");
-        const outW = encWidth;
-        const outH = Math.round((encWidth * 16) / 9);
-        const finalOutH = outH % 2 === 0 ? outH : outH + 1;
-        outCanvas.width = outW;
-        outCanvas.height = finalOutH;
-        const outCtx = outCanvas.getContext("2d");
-
-        if (outCtx) {
-          outCtx.fillStyle = "#f3f4f6"; // background
-          outCtx.fillRect(0, 0, outW, finalOutH);
-          // draw centered
-          const yOffset = (finalOutH - encHeight) / 2;
-          outCtx.drawImage(canvas, 0, yOffset);
-        }
-
-        const frame = new VideoFrame(outCanvas, { timestamp: timestampUs });
+        const frame = new VideoFrame(canvas, { timestamp: timestampUs });
         videoEncoder.encode(frame, { keyFrame: i % 30 === 0 });
         frame.close();
 
@@ -202,13 +188,9 @@ function ReplayPage() {
       const outroFrames = 30 * 4; // 4 seconds at 30fps
       const outroDelayUs = 1_000_000 / 30;
 
-      const outW = encWidth;
-      const outH = Math.round((encWidth * 16) / 9);
-      const finalOutH = outH % 2 === 0 ? outH : outH + 1;
-
       const outroCanvas = document.createElement("canvas");
       outroCanvas.width = outW;
-      outroCanvas.height = finalOutH;
+      outroCanvas.height = outH;
       const ctx = outroCanvas.getContext("2d");
 
       for (let j = 0; j < outroFrames; j++) {
@@ -216,34 +198,33 @@ function ReplayPage() {
 
         if (ctx) {
           ctx.fillStyle = "#f3f4f6";
-          ctx.fillRect(0, 0, outW, finalOutH);
+          ctx.fillRect(0, 0, outW, outH);
 
           if (lastBoardCanvas) {
-            const yOffset = (finalOutH - encHeight) / 2;
-            ctx.drawImage(lastBoardCanvas, 0, yOffset);
+            ctx.drawImage(lastBoardCanvas, 0, 0);
           }
 
           ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
-          ctx.fillRect(0, 0, outW, finalOutH);
+          ctx.fillRect(0, 0, outW, outH);
 
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
 
           ctx.font = "bold 32px sans-serif";
           ctx.fillStyle = "#0a84ff";
-          ctx.fillText(`WINNER: ${winnerName.toUpperCase()}`, outW / 2, finalOutH * 0.2);
+          ctx.fillText(`WINNER: ${winnerName.toUpperCase()}`, outW / 2, outH * 0.2);
 
           ctx.font = "bold 20px sans-serif";
           ctx.fillStyle = "#6b7280";
-          ctx.fillText(`LOSER: ${loserName.toUpperCase()}`, outW / 2, finalOutH * 0.25);
+          ctx.fillText(`LOSER: ${loserName.toUpperCase()}`, outW / 2, outH * 0.25);
 
-          let textY = finalOutH * 0.35;
+          let textY = outH * 0.35;
 
           if (vidEl && vidEl.videoWidth) {
             const aspect = vidEl.videoWidth / vidEl.videoHeight;
             const finalW = Math.min(300, outW * 0.8);
             const finalH = finalW / aspect;
-            const drawY = finalOutH * 0.35;
+            const drawY = outH * 0.35;
 
             ctx.shadowColor = "rgba(0,0,0,0.2)";
             ctx.shadowBlur = 20;
@@ -301,7 +282,7 @@ function ReplayPage() {
 
         {/* VIDEO RECORDING AREA */}
         <div ref={containerRef} className="flex-1 flex flex-col pt-0 relative bg-background overflow-hidden">
-          <GameHeader 
+          <GameHeader
             whitePlayer={sampleRecord.metadata.whitePlayer}
             whiteStatus="connected"
             blackPlayer={sampleRecord.metadata.blackPlayer}
