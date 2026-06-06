@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GameFrame } from "@/components/GameFrame";
+import { GameHeader } from "@/components/GameHeader";
 import { Avatar, type ConnStatus } from "@/components/Avatar";
 import { WinnerProgressBar } from "@/components/WinnerProgressBar";
 import { AdSlot } from "@/components/AdSlot";
@@ -395,36 +396,24 @@ function BgPage() {
 
   return (
     <GameFrame>
-      <Header onExit={() => setExitOpen(true)} muted={muted} onToggleMute={toggleMute} />
+      <GameHeader 
+        whitePlayer={session.host.nickname}
+        whiteStatus={hostStatus}
+        blackPlayer={session.player?.nickname}
+        blackStatus={playerStatus}
+        showControls={true}
+        onExit={() => setExitOpen(true)}
+        muted={muted}
+        onToggleMute={toggleMute}
+      />
 
-      <div className="grid grid-cols-3 items-center px-4 pt-2">
-        <div className="flex flex-col items-center gap-1">
-          <Avatar nickname={session.host.nickname} tone="host" status={hostStatus} />
-          <span className="text-xs font-semibold truncate max-w-[100px]">{session.host.nickname}</span>
-          <span className="text-[9px] uppercase tracking-wide text-muted-foreground">White</span>
-        </div>
-        <div className="text-center text-muted-foreground text-sm font-bold">VS</div>
-        <div className="flex flex-col items-center gap-1">
-          {session.player ? (
-            <>
-              <Avatar nickname={session.player.nickname} tone="player" status={playerStatus} />
-              <span className="text-xs font-semibold truncate max-w-[100px]">{session.player.nickname}</span>
-              <span className="text-[9px] uppercase tracking-wide text-muted-foreground">Black</span>
-            </>
-          ) : (
-            <>
-              <div className="h-12 w-12 rounded-full border-2 border-dashed border-muted-foreground/40" />
-              <span className="text-xs text-muted-foreground">waiting…</span>
-            </>
-          )}
-        </div>
+      <div className="px-4 mt-4">
+        <WinnerProgressBar advantage={adv} />
       </div>
 
-      <WinnerProgressBar advantage={adv} />
-
-      <div className="flex-1 flex flex-col items-center justify-center px-2 py-2 overflow-hidden">
+      <div className="flex-1 flex flex-col items-center justify-start px-2 py-4 overflow-hidden">
         {waiting && isHost ? (
-          <div className="w-full max-w-xs flex flex-col gap-3 items-center px-4">
+          <div className="w-full max-w-xs flex flex-col gap-3 items-center px-4 mt-8">
             <p className="text-sm text-muted-foreground text-center">Share this link to invite a friend</p>
             <div className="w-full flex gap-2">
               <Input readOnly value={inviteUrl} className="text-xs" />
@@ -435,21 +424,23 @@ function BgPage() {
             <p className="text-[11px] text-muted-foreground text-center">Keep this tab open — closing it ends the match.</p>
           </div>
         ) : (
-          <BackgammonBoard
-            state={session.state}
-            myColor={myColor}
-            selected={selected}
-            onSelect={setSelected}
-            onApply={handleApply}
-            onRoll={handleRoll}
-            onEndTurn={handleEndTurn}
-            onOfferDouble={handleOfferDouble}
-            isMyTurn={isMyTurn}
-            canOffer={canOffer}
-          />
+          <div className="w-full max-w-xl mx-auto px-2">
+            <BackgammonBoard
+              state={session.state}
+              myColor={myColor}
+              selected={selected}
+              onSelect={setSelected}
+              onApply={handleApply}
+              onRoll={handleRoll}
+              onEndTurn={handleEndTurn}
+              onOfferDouble={handleOfferDouble}
+              isMyTurn={isMyTurn}
+              canOffer={canOffer}
+            />
+          </div>
         )}
         {!waiting && (
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="mt-4 text-xs text-muted-foreground text-center">
             {session.status === "finished"
               ? "Game over"
               : isMyTurn
@@ -459,7 +450,7 @@ function BgPage() {
         )}
       </div>
 
-      <div className="px-4 pb-3">
+      <div className="px-4 pb-3 mt-auto w-full shrink-0">
         <AdSlot className="w-full h-14" />
       </div>
 
@@ -487,25 +478,7 @@ function BgPage() {
   );
 }
 
-function Header({ onExit, muted, onToggleMute }: { onExit: () => void; muted?: boolean; onToggleMute?: () => void }) {
-  return (
-    <div className="flex items-center justify-between px-4 pt-3 pb-1 shrink-0">
-      <div className="text-sm font-semibold">
-        play.withme <span className="text-muted-foreground font-normal">· Backgammon</span>
-      </div>
-      <div className="flex items-center gap-1">
-        {onToggleMute && (
-          <button type="button" onClick={onToggleMute} className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center" aria-label={muted ? "Unmute" : "Mute"}>
-            {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-          </button>
-        )}
-        <button type="button" onClick={onExit} className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center" aria-label="Exit">
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-    </div>
-  );
-}
+
 
 function CenterMessage({ children }: { children: React.ReactNode }) {
   return (
