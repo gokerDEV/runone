@@ -374,7 +374,7 @@ function BgPage() {
   if (role === "full") {
     return (
       <GameFrame>
-        <Header onExit={() => void navigate({ to: "/" })} />
+        <GameHeader onExit={() => void navigate({ to: "/" })} />
         <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6 text-center">
           <h2 className="text-xl font-semibold">Game already in progress</h2>
           {session && (
@@ -396,7 +396,7 @@ function BgPage() {
 
   return (
     <GameFrame>
-      <GameHeader 
+      <GameHeader
         whitePlayer={session.host.nickname}
         whiteStatus={hostStatus}
         blackPlayer={session.player?.nickname}
@@ -407,8 +407,12 @@ function BgPage() {
         onToggleMute={toggleMute}
       />
 
-      <div className="px-4 mt-4">
+      <div className="mt-1 mx-4 h-4 p-1 bg-muted rounded-full">
         <WinnerProgressBar advantage={adv} />
+      </div>
+      <div className="mt-1 mx-4 h-4 p-1">
+        {/* TODO: Timer for  time based playing */}
+        {/* <TimerProgressBar /> */}
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-start px-2 py-4 overflow-hidden">
@@ -444,8 +448,8 @@ function BgPage() {
             {session.status === "finished"
               ? "Game over"
               : isMyTurn
-              ? session.state.rolled ? "Your turn — move" : "Your turn — roll or double"
-              : "Opponent's turn"}
+                ? session.state.rolled ? "Your turn — move" : "Your turn — roll or double"
+                : "Opponent's turn"}
           </p>
         )}
       </div>
