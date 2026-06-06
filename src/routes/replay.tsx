@@ -9,11 +9,16 @@ import { startingState, applyMove, endTurn, advantage } from "@/lib/games/backga
 import { Button } from "@/components/ui/button";
 import { Play, Pause, Download, Loader2 } from "lucide-react";
 import sampleRecord from "@/assets/backgammon/sample_record.json";
-import type { BgState, Color, Move } from "@/lib/games/backgammon/types";
+import type { BgSession, BgState, Color, Move } from "@/lib/games/backgammon/types";
 import { toCanvas } from "html-to-image";
 import { Muxer, ArrayBufferTarget } from "mp4-muxer";
 
 export const Route = createFileRoute("/replay")({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      s: search.s as string | undefined,
+    }
+  },
   component: ReplayPage,
 });
 
@@ -28,14 +33,60 @@ function ReplayPage() {
   const [exportProgress, setExportProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const winnerColor = sampleRecord.metadata.winner as Color;
-  const winnerName = winnerColor === "white" ? sampleRecord.metadata.whitePlayer : sampleRecord.metadata.blackPlayer;
-  const winnerMessage = winnerColor === "white" ? sampleRecord.metadata.whiteMessage : sampleRecord.metadata.blackMessage;
-  const winnerGif = winnerColor === "white" ? sampleRecord.metadata.whiteGif : sampleRecord.metadata.blackGif;
-  const loserName = winnerColor === "white" ? sampleRecord.metadata.blackPlayer : sampleRecord.metadata.whitePlayer;
+  const { s: sessionId } = Route.useSearch();
+  const [sessionData, setSessionData] = useState<BgSession | null>(null);
+  const [snaps, setSnaps] = useState<BgState[]>([]);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    const rawSess = localStorage.getItem(`pwm:bg-session:${sessionId}`);
+    const rawSnaps = sessionStorage.getItem(`pwm:bg-snaps:${sessionId}`);
+    if (rawSess) {
+      try { setSessionData(JSON.parse(rawSess) as BgSession); } catch {}
+    }
+    if (rawSnaps) {
+      try { setSnaps(JSON.parse(rawSnaps) as BgState[]); } catch {}
+    }
+  }, [sessionId]);
+
+  const record = useMemo(() => {
+    if (sessionData && snaps.length > 0) {
+      const winnerColor = sessionData.state.winner || "white";
+      const host = sessionData.host;
+      const player = sessionData.player;
+      
+      return {
+        metadata: {
+          winner: winnerColor,
+          whitePlayer: host.nickname,
+          blackPlayer: player?.nickname || "Player",
+          whiteMessage: host.challengeMsg || "I am the host!",
+          blackMessage: player?.challengeMsg || "I am the player!",
+          whiteGif: host.giphyUrl || "https://media.giphy.com/media/l41JRsph73VokN6ik/giphy.gif",
+          blackGif: player?.giphyUrl || "https://media.giphy.com/media/l41JRsph73VokN6ik/giphy.gif",
+        },
+        events: [],
+        snapshots: snaps,
+        isReal: true
+      };
+    }
+    
+    return {
+      metadata: sampleRecord.metadata as any,
+      events: sampleRecord.events,
+      snapshots: [],
+      isReal: false
+    };
+  }, [sessionData, snaps]);
+
+  const winnerColor = record.metadata.winner as Color;
+  const winnerName = winnerColor === "white" ? record.metadata.whitePlayer : record.metadata.blackPlayer;
+  const winnerMessage = winnerColor === "white" ? record.metadata.whiteMessage : record.metadata.blackMessage;
+  const winnerGif = winnerColor === "white" ? record.metadata.whiteGif : record.metadata.blackGif;
+  const loserName = winnerColor === "white" ? record.metadata.blackPlayer : record.metadata.whitePlayer;
 
   const adv = useMemo(() => advantage(state), [state]);
-  const totalEvents = sampleRecord.events.length;
+  const totalEvents = record.isReal ? record.snapshots.length : record.events.length;
   // Calculate ms per event to fit the target duration exactly
   const delayMs = (targetDuration * 1000) / Math.max(1, totalEvents);
 
@@ -49,19 +100,23 @@ function ReplayPage() {
       }
 
       const t = setTimeout(() => {
-        const ev = sampleRecord.events[eventIdx] as any;
-
-        setState((prev) => {
-          if (ev.type === "roll") {
-            return { ...prev, dice: ev.dice, turn: ev.color, rolled: true };
-          } else if (ev.type === "move") {
-            const mv: Move = ev.move;
-            return applyMove(prev, ev.color, mv);
-          } else if (ev.type === "endTurn") {
-            return endTurn(prev);
-          }
-          return prev;
-        });
+        if (record.isReal) {
+          const snap = record.snapshots[eventIdx];
+          if (snap) setState(snap);
+        } else {
+          const ev = record.events[eventIdx] as any;
+          setState((prev) => {
+            if (ev.type === "roll") {
+              return { ...prev, dice: ev.dice, turn: ev.color, rolled: true };
+            } else if (ev.type === "move") {
+              const mv: Move = ev.move;
+              return applyMove(prev, ev.color, mv);
+            } else if (ev.type === "endTurn") {
+              return endTurn(prev);
+            }
+            return prev;
+          });
+        }
 
         setEventIdx(idx => idx + 1);
       }, delayMs);
@@ -130,7 +185,7 @@ function ReplayPage() {
       const delayUs = Math.floor((targetDuration * 1000 * 1000) / Math.max(1, totalEvents));
 
       // Reset game state for export
-      let simState = startingState();
+      let simState: BgState = record.isReal ? (record.snapshots[0] || startingState()) : startingState();
       setState(simState);
       setEventIdx(0);
       setPhase("playing");
@@ -161,10 +216,14 @@ function ReplayPage() {
 
         timestampUs += delayUs;
 
-        const ev = sampleRecord.events[i] as any;
-        if (ev.type === "roll") simState = { ...simState, dice: ev.dice, turn: ev.color, rolled: true };
-        else if (ev.type === "move") simState = applyMove(simState, ev.color, ev.move);
-        else if (ev.type === "endTurn") simState = endTurn(simState);
+        if (record.isReal) {
+          simState = record.snapshots[i] || simState;
+        } else {
+          const ev = record.events[i] as any;
+          if (ev.type === "roll") simState = { ...simState, dice: ev.dice, turn: ev.color, rolled: true };
+          else if (ev.type === "move") simState = applyMove(simState, ev.color, ev.move);
+          else if (ev.type === "endTurn") simState = endTurn(simState);
+        }
 
         setState(simState);
         setEventIdx(i + 1);
@@ -291,9 +350,9 @@ function ReplayPage() {
         {/* VIDEO RECORDING AREA */}
         <div ref={containerRef} className="flex-1 flex flex-col pt-0 relative bg-background overflow-hidden">
           <GameHeader
-            whitePlayer={sampleRecord.metadata.whitePlayer}
+            whitePlayer={record.metadata.whitePlayer}
             whiteStatus="connected"
-            blackPlayer={sampleRecord.metadata.blackPlayer}
+            blackPlayer={record.metadata.blackPlayer}
             blackStatus="connected"
             showControls={false}
           />

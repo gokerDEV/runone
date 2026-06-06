@@ -32,7 +32,7 @@ function newSessionId(): string {
 type GameKind = "tic-tac-toe" | "backgammon";
 
 function Landing() {
-  const { nickname, setNickname, localUserId, ready } = useLocalProfile();
+  const { nickname, setNickname, challengeMsg, setChallengeMsg, giphyUrl, setGiphyUrl, localUserId, ready } = useLocalProfile();
   const [draftName, setDraftName] = useState("");
   const [gameKind, setGameKind] = useState<GameKind>("tic-tac-toe");
   const [timed, setTimed] = useState<"untimed" | "timed">("untimed");
@@ -52,7 +52,7 @@ function Landing() {
         _id: sessionId,
         gameId: "tic-tac-toe",
         status: "created",
-        host: { localUserId, nickname: effectiveName },
+        host: { localUserId, nickname: effectiveName, challengeMsg, giphyUrl },
         settings: {
           timingMode: timed,
           turnSeconds: timed === "timed" ? DEFAULT_TURN_SECONDS : undefined,
@@ -72,7 +72,7 @@ function Landing() {
         _id: sessionId,
         gameId: "backgammon",
         status: "created",
-        host: { localUserId, nickname: effectiveName },
+        host: { localUserId, nickname: effectiveName, challengeMsg, giphyUrl },
         state: bgStartingState(),
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
@@ -104,6 +104,29 @@ function Landing() {
                 placeholder="Enter your nickname"
                 className="bg-white/10 border-white/20 text-white"
                 maxLength={24}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="challengeMsg" className="text-white/80">Challenge Message</Label>
+              <Input
+                id="challengeMsg"
+                value={challengeMsg}
+                onChange={(e) => setChallengeMsg(e.target.value)}
+                placeholder="Message to display when you win"
+                className="bg-white/10 border-white/20 text-white"
+                maxLength={100}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="giphyUrl" className="text-white/80">Victory Giphy URL</Label>
+              <Input
+                id="giphyUrl"
+                value={giphyUrl}
+                onChange={(e) => setGiphyUrl(e.target.value)}
+                placeholder="https://media.giphy.com/.../giphy.gif"
+                className="bg-white/10 border-white/20 text-white"
               />
             </div>
 

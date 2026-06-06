@@ -15,7 +15,12 @@ export type TicTacToeState = {
   winningLine?: number[];
 };
 
-export type PlayerInfo = { localUserId: string; nickname: string };
+export type PlayerInfo = {
+  localUserId: string;
+  nickname: string;
+  challengeMsg?: string;
+  giphyUrl?: string;
+};
 
 export type GameResult = {
   winnerRole?: PlayerRole;

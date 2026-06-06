@@ -48,7 +48,7 @@ type Role = "host" | "player" | "spectator" | "open" | "full" | "missing";
 function BgPage() {
   const { sessionId } = Route.useParams();
   const navigate = useNavigate();
-  const { localUserId, nickname, setNickname, ready } = useLocalProfile();
+  const { localUserId, nickname, setNickname, challengeMsg, giphyUrl, ready } = useLocalProfile();
   const [draftName, setDraftName] = useState("");
   const [session, setSession] = useState<BgSession | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -129,7 +129,7 @@ function BgPage() {
 
   useChannel(loaded ? `bg-${sessionId}` : null, {
     "player:hello": (data) => {
-      const hello = data as { localUserId: string; nickname: string };
+      const hello = data as { localUserId: string; nickname: string; challengeMsg?: string; giphyUrl?: string };
       setPeerLastSeen(Date.now());
       if (!isHost) return;
       const prev = sessionRef.current;
@@ -145,7 +145,7 @@ function BgPage() {
       const nowIso = new Date().toISOString();
       const next: BgSession = {
         ...prev,
-        player: { localUserId: hello.localUserId, nickname: hello.nickname },
+        player: { localUserId: hello.localUserId, nickname: hello.nickname, challengeMsg: hello.challengeMsg, giphyUrl: hello.giphyUrl },
         status: "playing",
         updatedAt: nowIso,
       };
@@ -181,8 +181,8 @@ function BgPage() {
     if (session?.player?.localUserId === localUserId) return;
     if (helloSentRef.current) return;
     helloSentRef.current = true;
-    void broadcast("player:hello", { localUserId, nickname });
-  }, [loaded, isHost, nickname, session?.player?.localUserId, localUserId, broadcast]);
+    void broadcast("player:hello", { localUserId, nickname, challengeMsg, giphyUrl });
+  }, [loaded, isHost, nickname, challengeMsg, giphyUrl, session?.player?.localUserId, localUserId, broadcast]);
 
   useEffect(() => {
     if (!loaded || !session?.player || session.status === "finished") return;
@@ -246,7 +246,7 @@ function BgPage() {
     if (mine) { sfx.win(); toast.success("You won!"); }
     else { sfx.lose(); toast.error("You lost"); }
     const t = window.setTimeout(() => {
-      void navigate({ to: "/b/$sessionId/result", params: { sessionId } });
+      void navigate({ to: "/replay", search: { s: sessionId } });
     }, 1400);
     return () => window.clearTimeout(t);
   }, [session?.status, session?.state.winner, myColor, sessionId, navigate]);
@@ -444,13 +444,20 @@ function BgPage() {
           </div>
         )}
         {!waiting && (
-          <p className="mt-4 text-xs text-muted-foreground text-center">
-            {session.status === "finished"
-              ? "Game over"
-              : isMyTurn
-                ? session.state.rolled ? "Your turn — move" : "Your turn — roll or double"
-                : "Opponent's turn"}
-          </p>
+          <div className="mt-4 flex flex-col items-center gap-3">
+            <p className="text-xs text-muted-foreground text-center">
+              {session.status === "finished"
+                ? "Game over"
+                : isMyTurn
+                  ? session.state.rolled ? "Your turn — move" : "Your turn — roll or double"
+                  : "Opponent's turn"}
+            </p>
+            {session.status === "finished" && (
+              <Button onClick={() => void navigate({ to: "/replay", search: { s: sessionId } })} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-2 rounded-full shadow-lg">
+                <Download className="w-4 h-4 mr-2" /> Export Replay Video
+              </Button>
+            )}
+          </div>
         )}
       </div>
 
