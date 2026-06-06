@@ -94,10 +94,12 @@ function ReplayPage() {
     await new Promise(r => setTimeout(r, 200));
 
     try {
-      const width = containerRef.current.offsetWidth || 800;
+      const baseWidth = containerRef.current.offsetWidth || 400;
+      const scale = 2; // 2x High Quality Export
 
       // WebCodecs H264 requires dimensions to be even numbers
-      const outW = width % 2 === 0 ? width : width + 1;
+      const targetW = baseWidth * scale;
+      const outW = targetW % 2 === 0 ? targetW : targetW + 1;
       const rawOutH = Math.round((outW * 16) / 9);
       const outH = rawOutH % 2 === 0 ? rawOutH : rawOutH + 1;
 
@@ -120,7 +122,7 @@ function ReplayPage() {
         codec: 'avc1.420028',
         width: outW,
         height: outH,
-        bitrate: 2_000_000,
+        bitrate: 5_000_000,
         framerate: 30,
       });
 
@@ -142,10 +144,10 @@ function ReplayPage() {
         setExportProgress((i / totalEvents) * 0.8);
 
         const canvas = await toCanvas(containerRef.current, {
-          width: outW,
-          height: outH,
+          canvasWidth: outW,
+          canvasHeight: outH,
           backgroundColor: "#ffffff",
-          pixelRatio: 1,
+          pixelRatio: scale,
           style: {
             margin: "0",
             padding: "0"
@@ -193,6 +195,8 @@ function ReplayPage() {
       outroCanvas.height = outH;
       const ctx = outroCanvas.getContext("2d");
 
+      const scaleMult = outW / 400;
+
       for (let j = 0; j < outroFrames; j++) {
         setExportProgress(0.8 + (j / outroFrames) * 0.2);
 
@@ -210,11 +214,11 @@ function ReplayPage() {
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
 
-          ctx.font = "bold 32px sans-serif";
+          ctx.font = `bold ${32 * scaleMult}px sans-serif`;
           ctx.fillStyle = "#0a84ff";
           ctx.fillText(`WINNER: ${winnerName.toUpperCase()}`, outW / 2, outH * 0.2);
 
-          ctx.font = "bold 20px sans-serif";
+          ctx.font = `bold ${20 * scaleMult}px sans-serif`;
           ctx.fillStyle = "#6b7280";
           ctx.fillText(`LOSER: ${loserName.toUpperCase()}`, outW / 2, outH * 0.25);
 
@@ -222,7 +226,7 @@ function ReplayPage() {
 
           if (vidEl && vidEl.videoWidth) {
             const aspect = vidEl.videoWidth / vidEl.videoHeight;
-            const finalW = Math.min(300, outW * 0.8);
+            const finalW = Math.min(300 * scaleMult, outW * 0.8);
             const finalH = finalW / aspect;
             const drawY = outH * 0.35;
 
@@ -230,16 +234,16 @@ function ReplayPage() {
             ctx.shadowBlur = 20;
             ctx.shadowOffsetY = 10;
             ctx.fillStyle = "#e5e7eb";
-            ctx.fillRect(outW / 2 - finalW / 2 - 4, drawY - 4, finalW + 8, finalH + 8);
+            ctx.fillRect(outW / 2 - finalW / 2 - (4 * scaleMult), drawY - (4 * scaleMult), finalW + (8 * scaleMult), finalH + (8 * scaleMult));
 
             ctx.shadowColor = "transparent";
             ctx.shadowBlur = 0;
             ctx.drawImage(vidEl, outW / 2 - finalW / 2, drawY, finalW, finalH);
 
-            textY = drawY + finalH + 40;
+            textY = drawY + finalH + (40 * scaleMult);
           }
 
-          ctx.font = "italic 500 20px sans-serif";
+          ctx.font = `italic 500 ${20 * scaleMult}px sans-serif`;
           ctx.fillStyle = "#111827";
           ctx.fillText(`"${winnerMessage}"`, outW / 2, textY);
         }
@@ -269,7 +273,11 @@ function ReplayPage() {
       alert("Export failed: " + e.message);
     } finally {
       setIsExporting(false);
-      handleRestart();
+      setExportProgress(0);
+      setIsPlaying(false);
+      setState(startingState());
+      setEventIdx(0);
+      setPhase("playing");
     }
   }
 
