@@ -16,10 +16,6 @@ type Props = {
 };
 
 type Pip = readonly [number, number];
-
-const topIdx = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] as const;
-const bottomIdx = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] as const;
-
 const diePips: Record<number, readonly Pip[]> = {
   1: [[50, 50]],
   2: [[32, 32], [68, 68]],
@@ -193,6 +189,14 @@ export function BackgammonBoard({
   const [rollingDice, setRollingDice] = useState<number[] | null>(null);
   const [isRolling, setIsRolling] = useState(false);
 
+  const isBlack = myColor === "black";
+  const displayTopIdx = isBlack 
+    ? [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] 
+    : [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+  const displayBottomIdx = isBlack 
+    ? [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] 
+    : [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+
   const moves = useMemo(() => (myColor ? legalMoves(state, myColor) : []), [state, myColor]);
   const legalDests = useMemo(
     () => (selected !== null ? moves.filter((m) => m.from === selected).map((m) => m.to) : []),
@@ -313,12 +317,12 @@ export function BackgammonBoard({
       />
 
       <div className="absolute inset-0 z-10 pointer-events-none">
-        {topIdx.map((idx, i) => renderPoint(idx, true, i))}
-        {bottomIdx.map((idx, i) => renderPoint(idx, false, i))}
+        {displayTopIdx.map((idx, i) => renderPoint(idx, true, i))}
+        {displayBottomIdx.map((idx, i) => renderPoint(idx, false, i))}
 
         {/* Center Bar */}
         <div className="absolute top-[10.4%] bottom-[10.4%] left-[50%] w-12 -translate-x-1/2 flex flex-col justify-between py-4 pointer-events-none">
-          <BarStack color="white" count={state.bar.white} selected={myColor === "white" && selected === "bar"} onClick={clickBar} />
+          <BarStack color={isBlack ? "black" : "white"} count={isBlack ? state.bar.black : state.bar.white} selected={selected === "bar"} onClick={clickBar} />
           
           <div className="pointer-events-auto flex flex-col items-center gap-2">
             {!state.rolled && (!isMyTurn || state.winner) ? (
@@ -335,7 +339,7 @@ export function BackgammonBoard({
             </button>
           </div>
 
-          <BarStack color="black" count={state.bar.black} selected={myColor === "black" && selected === "bar"} onClick={clickBar} />
+          <BarStack color={isBlack ? "white" : "black"} count={isBlack ? state.bar.white : state.bar.black} selected={false} onClick={clickBar} />
         </div>
 
         {/* Roll Button Area (Right half) */}
@@ -343,14 +347,14 @@ export function BackgammonBoard({
         {/* Top Left Tray - Opponent's tray */}
         <div className="absolute top-0 left-0 w-[33.6%] h-[6.75%] flex items-center justify-center px-4 pointer-events-auto">
           <div className="flex w-full items-center justify-center h-full">
-            <OffTray color={myColor === "white" ? "black" : "white"} count={myColor === "white" ? state.off.black : state.off.white} />
+            <OffTray color={isBlack ? "white" : "black"} count={isBlack ? state.off.white : state.off.black} />
           </div>
         </div>
 
         {/* Bottom Right Tray - My tray */}
         <div className="absolute bottom-0 right-0 w-[33.6%] h-[6.75%] flex items-center justify-center px-4 pointer-events-auto">
           <div className="flex w-full items-center justify-center h-full cursor-pointer hover:bg-black/5 rounded-[19px] transition" onClick={clickOff}>
-            <OffTray color={myColor === "white" ? "white" : "black"} count={myColor === "white" ? state.off.white : state.off.black} />
+            <OffTray color={isBlack ? "black" : "white"} count={isBlack ? state.off.black : state.off.white} />
           </div>
         </div>
 
