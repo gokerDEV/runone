@@ -1,0 +1,11 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect x="7" y="7" width="86" height="86" rx="22" fill="#f9f9fb" />
+  <rect x="8.5" y="8.5" width="83" height="83" rx="20.5" fill="none" stroke="#c7c7cc" stroke-width="3" />
+  <path d="M24 14 H74 Q86 14 86 26" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="5" stroke-linecap="round" />
+  <!-- Example: Die 5 pips -->
+  <circle cx="30" cy="30" r="7.5" fill="#1c1c1e" />
+  <circle cx="70" cy="30" r="7.5" fill="#1c1c1e" />
+  <circle cx="50" cy="50" r="7.5" fill="#1c1c1e" />
+  <circle cx="30" cy="70" r="7.5" fill="#1c1c1e" />
+  <circle cx="70" cy="70" r="7.5" fill="#1c1c1e" />
+</svg>

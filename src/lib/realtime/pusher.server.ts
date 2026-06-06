@@ -7,13 +7,19 @@ function cfg() {
   const secret = process.env.PUSHER_SECRET;
   const cluster = process.env.PUSHER_CLUSTER;
   if (!appId || !key || !secret || !cluster) {
-    throw new Error("Pusher env not configured");
+    console.warn("Pusher env not configured. Pusher triggers will be ignored.");
+    return null;
   }
   return { appId, key, secret, cluster };
 }
 
 export async function pusherTrigger(channel: string, event: string, data: unknown) {
-  const { appId, key, secret, cluster } = cfg();
+  const config = cfg();
+  if (!config) {
+    console.warn("Config not found");
+    return
+  };
+  const { appId, key, secret, cluster } = config;
   const body = JSON.stringify({
     name: event,
     channel,
