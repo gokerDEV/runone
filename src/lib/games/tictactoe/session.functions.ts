@@ -1,4 +1,5 @@
 // Thin Pusher relay — no DB. Host is authoritative, both peers compute state locally.
+// (Forced hash update to clear Vite cache issue)
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { pusherTrigger } from "@/lib/realtime/pusher.server";

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReplayRouteImport } from './routes/replay'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GSessionIdRouteImport } from './routes/g.$sessionId'
 import { Route as BSessionIdRouteImport } from './routes/b.$sessionId'
@@ -18,6 +19,11 @@ import { Route as BSessionIdIndexRouteImport } from './routes/b.$sessionId.index
 import { Route as GSessionIdResultRouteImport } from './routes/g.$sessionId.result'
 import { Route as BSessionIdResultRouteImport } from './routes/b.$sessionId.result'
 
+const ReplayRoute = ReplayRouteImport.update({
+  id: '/replay',
+  path: '/replay',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -61,6 +67,7 @@ const BSessionIdResultRoute = BSessionIdResultRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/replay': typeof ReplayRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
   '/b/$sessionId': typeof BSessionIdRouteWithChildren
   '/g/$sessionId': typeof GSessionIdRouteWithChildren
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/replay': typeof ReplayRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
   '/b/$sessionId/result': typeof BSessionIdResultRoute
   '/g/$sessionId/result': typeof GSessionIdResultRoute
@@ -80,6 +88,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/replay': typeof ReplayRoute
   '/api/realtime-config': typeof ApiRealtimeConfigRoute
   '/b/$sessionId': typeof BSessionIdRouteWithChildren
   '/g/$sessionId': typeof GSessionIdRouteWithChildren
@@ -92,6 +101,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/replay'
     | '/api/realtime-config'
     | '/b/$sessionId'
     | '/g/$sessionId'
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/replay'
     | '/api/realtime-config'
     | '/b/$sessionId/result'
     | '/g/$sessionId/result'
@@ -110,6 +121,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/replay'
     | '/api/realtime-config'
     | '/b/$sessionId'
     | '/g/$sessionId'
@@ -121,6 +133,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ReplayRoute: typeof ReplayRoute
   ApiRealtimeConfigRoute: typeof ApiRealtimeConfigRoute
   BSessionIdRoute: typeof BSessionIdRouteWithChildren
   GSessionIdRoute: typeof GSessionIdRouteWithChildren
@@ -128,6 +141,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/replay': {
+      id: '/replay'
+      path: '/replay'
+      fullPath: '/replay'
+      preLoaderRoute: typeof ReplayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -217,6 +237,7 @@ const GSessionIdRouteWithChildren = GSessionIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ReplayRoute: ReplayRoute,
   ApiRealtimeConfigRoute: ApiRealtimeConfigRoute,
   BSessionIdRoute: BSessionIdRouteWithChildren,
   GSessionIdRoute: GSessionIdRouteWithChildren,

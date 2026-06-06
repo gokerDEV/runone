@@ -1,0 +1,2643 @@
+{
+  "metadata": {
+    "matchId": "sample-match-1",
+    "whitePlayer": "Alice",
+    "whiteMessage": "I will crush you!",
+    "whiteGif": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExODF3bG5zcG13cG84MWxobHBvODFwanJtY2ZibDhhbW90eDF4NHF4ciZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/89x4osEodHEoo/giphy.gif",
+    "blackPlayer": "Bob",
+    "blackMessage": "You have no chance!",
+    "blackGif": "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3czVidjZjNWhudnB3dXBjdXdvOG5jNTZkeGZia2dqdm04Z3k5djk4OSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/3NjABnBOieYQE4BpkP/giphy.gif",
+    "winner": "black"
+  },
+  "events": [
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 23,
+        "to": 17,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 23,
+        "to": 19,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        2,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 11,
+        "to": 17,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 0,
+        "to": 2,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        1,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 23,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 5,
+        "to": 1,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        1,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 20,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 18,
+        "to": 19,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        1,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 23,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 7,
+        "to": 2,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        6,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 3,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 3,
+        "to": 9,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 23,
+        "to": 17,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 7,
+        "to": 6,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 4,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 0,
+        "to": 1,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 9,
+        "to": 14,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 22,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 22,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 7,
+        "to": 5,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 6,
+        "to": 4,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 5,
+        "to": 3,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        2,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 4,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 1,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        2,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 22,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 12,
+        "to": 6,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        1,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 1,
+        "to": 2,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 20,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        4,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 22,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 5,
+        "to": 1,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        6,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 1,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 4,
+        "to": 10,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        1,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 23,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 17,
+        "to": 15,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        2,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 18,
+        "to": 20,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 11,
+        "to": 17,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        3,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 23,
+        "to": 19,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 22,
+        "to": 19,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 0,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 18,
+        "to": 23,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 19,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 22,
+        "to": 16,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 11,
+        "to": 16,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 17,
+        "to": 18,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        2,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 22,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 22,
+        "to": 21,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 2,
+        "to": 6,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 20,
+        "to": 23,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        3,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 21,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 15,
+        "to": 14,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 4,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 1,
+        "to": 4,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 21,
+        "to": 15,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 14,
+        "to": 13,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 18,
+        "to": 23,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 6,
+        "to": 10,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        4,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 5,
+        "to": 2,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 12,
+        "to": 8,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 4,
+        "to": 8,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 10,
+        "to": 14,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 20,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 14,
+        "to": 18,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        3,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 21,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 21,
+        "to": 15,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 20,
+        "to": 21,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 11,
+        "to": 16,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        3,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 21,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 8,
+        "to": 11,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        3,
+        4
+      ]
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 18,
+        "to": 21,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 11,
+        "to": 16,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        1,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 20,
+        "to": 21,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 20,
+        "to": 23,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 22,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 19,
+        "to": 14,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 4,
+        "to": 10,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 18,
+        "to": 23,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 12,
+        "to": 8,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 19,
+        "to": 14,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 0,
+        "to": 4,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 4,
+        "to": 8,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 20,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        1,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 19,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 5,
+        "to": 4,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 10,
+        "to": 16,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 20,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 5,
+        "to": 0,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 19,
+        "to": 15,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 11,
+        "to": 16,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 19,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        2,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 18,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 3,
+        "to": 1,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 0,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 19,
+        "to": 23,
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        4,
+        1
+      ]
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        1,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 10,
+        "to": 16,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 0,
+        "to": 1,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 18,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 18,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 18,
+        "to": 12,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 14,
+        "to": 8,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 4,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 16,
+        "to": 21,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 1,
+        "to": 6,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 4,
+        "to": 9,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        4,
+        3
+      ]
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        2,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 21,
+        "to": 23,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 9,
+        "to": 14,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        2,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 22,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 6,
+        "to": 11,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 14,
+        "to": 16,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 18,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 13,
+        "to": 8,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 11,
+        "to": 17,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 17,
+        "to": 23,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 18,
+        "to": 16,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 12,
+        "to": 10,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 16,
+        "to": 14,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 18,
+        "to": 16,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        1,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 0,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 0,
+        "to": 5,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 12,
+        "to": 7,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 22,
+        "to": 17,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 15,
+        "to": 10,
+        "die": 5
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 8,
+        "to": 3,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        1,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 21,
+        "to": 23,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 20,
+        "to": 21,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        3,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 18,
+        "to": 15,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 16,
+        "to": 14,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        1,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 5,
+        "to": 9,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 20,
+        "to": 21,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        1,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 12,
+        "to": 9,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 8,
+        "to": 7,
+        "die": 1
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        6,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": "bar",
+        "to": 2,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 2,
+        "to": 8,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 18,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 10,
+        "to": 5,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 8,
+        "to": 12,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 12,
+        "to": 17,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": "bar",
+        "to": 18,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 15,
+        "to": 13,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        3,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 17,
+        "to": 19,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 21,
+        "to": "off",
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        3,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 9,
+        "to": 6,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 22,
+        "to": 16,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        5,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 21,
+        "to": "off",
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 19,
+        "to": "off",
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        5,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 6,
+        "to": 4,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 16,
+        "to": 11,
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 21,
+        "to": 23,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 21,
+        "to": 23,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 21,
+        "to": 23,
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 10,
+        "to": 4,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 3,
+        "to": 0,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        6,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 5
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        2,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 15,
+        "to": 11,
+        "die": 4
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 4,
+        "to": 2,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        2,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 15,
+        "to": 9,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 22,
+        "to": 20,
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        2,
+        1
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 2
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        1,
+        6
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 20,
+        "to": 19,
+        "die": 1
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 14,
+        "to": 8,
+        "die": 6
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        2
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 2
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        6,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 14,
+        "to": 8,
+        "die": 6
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 4,
+        "to": 1,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        3,
+        4
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 4
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "black"
+    },
+    {
+      "type": "roll",
+      "color": "white",
+      "dice": [
+        3,
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 7,
+        "to": 4,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 13,
+        "to": 10,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 19,
+        "to": 16,
+        "die": 3
+      }
+    },
+    {
+      "type": "move",
+      "color": "white",
+      "move": {
+        "from": 7,
+        "to": 4,
+        "die": 3
+      }
+    },
+    {
+      "type": "endTurn",
+      "color": "white"
+    },
+    {
+      "type": "roll",
+      "color": "black",
+      "dice": [
+        4,
+        5
+      ]
+    },
+    {
+      "type": "move",
+      "color": "black",
+      "move": {
+        "from": 23,
+        "to": "off",
+        "die": 5
+      }
+    }
+  ]
+}
