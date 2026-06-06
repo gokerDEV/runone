@@ -8,7 +8,7 @@ type Props = {
   selected: number | "bar" | null;
   onSelect: (src: number | "bar" | null) => void;
   onApply: (mv: Move) => void;
-  onRoll: () => void;
+  onRoll: (isCheat?: boolean) => void;
   onEndTurn: () => void;
   onOfferDouble: () => void;
   isMyTurn: boolean;
@@ -39,7 +39,7 @@ function DiePips({ v, x, y, size }: { v: number; x: number; y: number; size: num
   );
 }
 
-function BoardSVG({ dice, isMyTurn, rolled, rollingDice, onEmptyClick, canRoll }: { dice: number[]; isMyTurn: boolean; rolled: boolean; rollingDice: number[] | null; onEmptyClick?: () => void; canRoll: boolean; }) {
+function BoardSVG({ dice, isMyTurn, rolled, rollingDice, onEmptyClick, canRoll }: { dice: number[]; isMyTurn: boolean; rolled: boolean; rollingDice: number[] | null; onEmptyClick?: (e: React.MouseEvent) => void; canRoll: boolean; }) {
   let d1: number | null = null;
   let d2: number | null = null;
   
@@ -205,11 +205,12 @@ export function BackgammonBoard({
   const canEndTurn = isMyTurn && state.rolled && moves.length === 0;
   const canRoll = isMyTurn && !state.pendingDouble && !state.winner;
 
-  function handleEmptyClick() {
+  function handleEmptyClick(e: React.MouseEvent) {
     if (isRolling) return;
     setIsRolling(true);
     let iterations = 0;
     const maxIterations = 15;
+    const isCheat = import.meta.env.VITE_CHEATING === "true" && e.metaKey;
     
     function nextFrame() {
       iterations++;
@@ -220,7 +221,7 @@ export function BackgammonBoard({
       } else {
         setRollingDice(null);
         setIsRolling(false);
-        onRoll();
+        onRoll(isCheat);
       }
     }
     nextFrame();

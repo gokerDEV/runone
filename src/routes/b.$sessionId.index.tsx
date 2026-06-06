@@ -277,10 +277,10 @@ function BgPage() {
     [broadcast, localUserId],
   );
 
-  function handleRoll() {
+  function handleRoll(isCheat?: boolean) {
     if (!session || !myColor) return;
     if (!isMyTurn || session.state.rolled || session.state.pendingDouble) return;
-    const ns = rollDice(session.state);
+    const ns = rollDice(session.state, isCheat);
     pushState({ ...session, state: ns, updatedAt: new Date().toISOString() });
   }
 

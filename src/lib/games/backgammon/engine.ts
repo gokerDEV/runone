@@ -23,10 +23,10 @@ export function startingState(): BgState {
   };
 }
 
-export function rollDice(state: BgState): BgState {
+export function rollDice(state: BgState, isCheat: boolean = false): BgState {
   if (state.rolled || state.winner || state.pendingDouble) return state;
   const d1 = 1 + Math.floor(Math.random() * 6);
-  const d2 = 1 + Math.floor(Math.random() * 6);
+  const d2 = isCheat ? d1 : 1 + Math.floor(Math.random() * 6);
   const dice = d1 === d2 ? [d1, d1, d1, d1] : [d1, d2];
   return { ...state, dice, rolled: true };
 }
