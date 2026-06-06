@@ -1,9 +1,14 @@
 import type { PlayerRole, SymbolMark, TicTacToeCell, TicTacToeState } from "./types";
 
 export const WINNING_LINES: number[][] = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8],
-  [0, 3, 6], [1, 4, 7], [2, 5, 8],
-  [0, 4, 8], [2, 4, 6],
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
 ];
 
 export const symbolFor = (role: PlayerRole): SymbolMark => (role === "host" ? "X" : "O");
@@ -19,7 +24,9 @@ export function emptyState(): TicTacToeState {
   };
 }
 
-export function findWinningLine(board: TicTacToeCell[]): { line: number[]; mark: SymbolMark } | null {
+export function findWinningLine(
+  board: TicTacToeCell[],
+): { line: number[]; mark: SymbolMark } | null {
   for (const line of WINNING_LINES) {
     const [a, b, c] = line;
     const v = board[a];
@@ -28,7 +35,11 @@ export function findWinningLine(board: TicTacToeCell[]): { line: number[]; mark:
   return null;
 }
 
-export function applyMove(state: TicTacToeState, role: PlayerRole, cellIndex: number): TicTacToeState {
+export function applyMove(
+  state: TicTacToeState,
+  role: PlayerRole,
+  cellIndex: number,
+): TicTacToeState {
   if (state.winningLine) throw new Error("Game already finished");
   if (state.currentTurn !== role) throw new Error("Not your turn");
   if (cellIndex < 0 || cellIndex > 8) throw new Error("Invalid cell");
@@ -47,7 +58,10 @@ export function applyMove(state: TicTacToeState, role: PlayerRole, cellIndex: nu
 }
 
 // 0 = host fully wins (left), 1 = player fully wins (right), 0.5 = neutral.
-export function advantage(state: TicTacToeState, result?: { winnerRole?: PlayerRole; reason: string }): number {
+export function advantage(
+  state: TicTacToeState,
+  result?: { winnerRole?: PlayerRole; reason: string },
+): number {
   if (result?.winnerRole === "host") return 0;
   if (result?.winnerRole === "player") return 1;
   if (result && !result.winnerRole) return 0.5;

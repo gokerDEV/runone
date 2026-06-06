@@ -57,11 +57,19 @@ function ResultPage() {
     if (!ready || typeof window === "undefined") return;
     const raw = localStorage.getItem(`pwm:bg-session:${sessionId}`);
     if (raw) {
-      try { setSession(JSON.parse(raw) as BgSession); } catch { /* noop */ }
+      try {
+        setSession(JSON.parse(raw) as BgSession);
+      } catch {
+        /* noop */
+      }
     }
     const snapsRaw = window.sessionStorage.getItem(`pwm:bg-snaps:${sessionId}`);
     if (snapsRaw) {
-      try { setSnapshots(JSON.parse(snapsRaw) as BgState[]); } catch { /* noop */ }
+      try {
+        setSnapshots(JSON.parse(snapsRaw) as BgState[]);
+      } catch {
+        /* noop */
+      }
     }
   }, [ready, sessionId]);
 
@@ -100,7 +108,9 @@ function ResultPage() {
   if (!session) {
     return (
       <GameFrame>
-        <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">Loading result…</div>
+        <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
+          Loading result…
+        </div>
       </GameFrame>
     );
   }
@@ -123,13 +133,17 @@ function ResultPage() {
       <div className="grid grid-cols-3 items-center px-4 pt-2">
         <div className="flex flex-col items-center gap-1">
           <Avatar nickname={session.host.nickname} tone="host" />
-          <span className="text-xs font-semibold truncate max-w-[100px]">{session.host.nickname}</span>
+          <span className="text-xs font-semibold truncate max-w-[100px]">
+            {session.host.nickname}
+          </span>
           <span className="text-[9px] uppercase text-muted-foreground">White</span>
         </div>
         <div className="text-center text-muted-foreground text-sm font-bold">VS</div>
         <div className="flex flex-col items-center gap-1">
           <Avatar nickname={session.player?.nickname ?? "?"} tone="player" />
-          <span className="text-xs font-semibold truncate max-w-[100px]">{session.player?.nickname ?? "—"}</span>
+          <span className="text-xs font-semibold truncate max-w-[100px]">
+            {session.player?.nickname ?? "—"}
+          </span>
           <span className="text-[9px] uppercase text-muted-foreground">Black</span>
         </div>
       </div>
@@ -139,7 +153,11 @@ function ResultPage() {
           {outcome === "win" ? "You won!" : outcome === "loss" ? "You lost!" : "Match finished"}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {reason === "resign" ? "by resignation" : reason === "decline" ? "double declined" : `bear-off complete`}
+          {reason === "resign"
+            ? "by resignation"
+            : reason === "decline"
+              ? "double declined"
+              : `bear-off complete`}
           {cube > 1 && ` · cube ${cube}×`}
         </p>
 
@@ -157,13 +175,25 @@ function ResultPage() {
         {isWinner && (
           <div className="w-full flex flex-col gap-2 text-left">
             <Label htmlFor="msg">Victory message</Label>
-            <Textarea id="msg" value={winnerMsg} maxLength={120} onChange={(e) => setWinnerMsg(e.target.value.slice(0, 120))} rows={2} />
+            <Textarea
+              id="msg"
+              value={winnerMsg}
+              maxLength={120}
+              onChange={(e) => setWinnerMsg(e.target.value.slice(0, 120))}
+              rows={2}
+            />
           </div>
         )}
         {isLoser && (
           <div className="w-full flex flex-col gap-2 text-left">
             <Label htmlFor="msg">Celebrate message</Label>
-            <Textarea id="msg" value={loserMsg} maxLength={120} onChange={(e) => setLoserMsg(e.target.value.slice(0, 120))} rows={2} />
+            <Textarea
+              id="msg"
+              value={loserMsg}
+              maxLength={120}
+              onChange={(e) => setLoserMsg(e.target.value.slice(0, 120))}
+              rows={2}
+            />
           </div>
         )}
 
@@ -176,7 +206,11 @@ function ResultPage() {
           {exporting ? "Preparing…" : "Export as Video"}
         </Button>
         {downloadUrl && (
-          <a href={downloadUrl} download={`play-withme-bg-${sessionId}.mp4`} className="text-xs underline text-muted-foreground">
+          <a
+            href={downloadUrl}
+            download={`play-withme-bg-${sessionId}.mp4`}
+            className="text-xs underline text-muted-foreground"
+          >
             Download again
           </a>
         )}

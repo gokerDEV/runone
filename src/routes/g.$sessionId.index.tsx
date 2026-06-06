@@ -128,11 +128,19 @@ function GamePage() {
       if (!prev) return;
       // Same guest re-announcing: just resend state.
       if (prev.player && prev.player.localUserId !== hello.localUserId) {
-        void broadcast("state:update", { session: prev, moves: movesRef.current, from: localUserId });
+        void broadcast("state:update", {
+          session: prev,
+          moves: movesRef.current,
+          from: localUserId,
+        });
         return;
       }
       if (prev.player && prev.player.localUserId === hello.localUserId) {
-        void broadcast("state:update", { session: prev, moves: movesRef.current, from: localUserId });
+        void broadcast("state:update", {
+          session: prev,
+          moves: movesRef.current,
+          from: localUserId,
+        });
         return;
       }
       const nowIso = new Date().toISOString();
@@ -204,7 +212,9 @@ function GamePage() {
     const handler = () => {
       try {
         void broadcast("peer:leave", { from: localUserId, nickname });
-      } catch { /* noop */ }
+      } catch {
+        /* noop */
+      }
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
@@ -240,7 +250,6 @@ function GamePage() {
     }
   }, [moves, sessionId, session]);
 
-
   // Finish: sound + toast, then navigate
   useEffect(() => {
     if (session?.status !== "finished" || !session.result) return;
@@ -254,7 +263,13 @@ function GamePage() {
       toast.success("You won!");
     } else {
       sfx.lose();
-      toast.error(r.reason === "timeout" ? "You lost on time" : r.reason === "forfeit" ? "Opponent forfeited" : "You lost");
+      toast.error(
+        r.reason === "timeout"
+          ? "You lost on time"
+          : r.reason === "forfeit"
+            ? "Opponent forfeited"
+            : "You lost",
+      );
     }
     const t = window.setTimeout(() => {
       void navigate({ to: "/g/$sessionId/result", params: { sessionId } });
@@ -296,7 +311,6 @@ function GamePage() {
     setMuted(next);
     if (!next) sfx.notify();
   }
-
 
   // Turn timer
   const turnSeconds = session?.settings.turnSeconds ?? DEFAULT_TURN_SECONDS;
@@ -364,13 +378,14 @@ function GamePage() {
       updated.result = { winnerRole: "host", loserRole: "player", reason: "timeout" };
     }
     setSession(updated);
-    void broadcast("state:update", { session: updated, moves: movesRef.current, from: localUserId });
+    void broadcast("state:update", {
+      session: updated,
+      moves: movesRef.current,
+      from: localUserId,
+    });
   };
 
-  const adv = useMemo(
-    () => (session ? advantage(session.state, session.result) : 0.5),
-    [session],
-  );
+  const adv = useMemo(() => (session ? advantage(session.state, session.result) : 0.5), [session]);
 
   const onCell = useCallback(
     (i: number) => {
@@ -438,7 +453,11 @@ function GamePage() {
       result: { winnerRole: winner, loserRole: r, reason: "forfeit" },
     };
     setSession(updated);
-    void broadcast("state:update", { session: updated, moves: movesRef.current, from: localUserId });
+    void broadcast("state:update", {
+      session: updated,
+      moves: movesRef.current,
+      from: localUserId,
+    });
   }
 
   if (!ready || !loaded) {
@@ -507,14 +526,18 @@ function GamePage() {
       <div className="grid grid-cols-3 items-center px-4 pt-2">
         <div className="flex flex-col items-center gap-1">
           <Avatar nickname={session.host.nickname} tone="host" status={hostStatus} />
-          <span className="text-xs font-semibold truncate max-w-[100px]">{session.host.nickname}</span>
+          <span className="text-xs font-semibold truncate max-w-[100px]">
+            {session.host.nickname}
+          </span>
         </div>
         <div className="text-center text-muted-foreground text-sm font-bold">VS</div>
         <div className="flex flex-col items-center gap-1">
           {session.player ? (
             <>
               <Avatar nickname={session.player.nickname} tone="player" status={playerStatus} />
-              <span className="text-xs font-semibold truncate max-w-[100px]">{session.player.nickname}</span>
+              <span className="text-xs font-semibold truncate max-w-[100px]">
+                {session.player.nickname}
+              </span>
             </>
           ) : (
             <>
@@ -525,7 +548,6 @@ function GamePage() {
         </div>
       </div>
 
-
       <WinnerProgressBar advantage={adv} />
       {session.settings.timingMode === "timed" && remaining !== null && (
         <TimeProgressBar remaining={remaining} total={turnSeconds} />
@@ -534,7 +556,9 @@ function GamePage() {
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         {waiting && isHost ? (
           <div className="w-full max-w-xs flex flex-col gap-3 items-center">
-            <p className="text-sm text-muted-foreground text-center">Share this link to invite a friend</p>
+            <p className="text-sm text-muted-foreground text-center">
+              Share this link to invite a friend
+            </p>
             <div className="w-full flex gap-2">
               <Input readOnly value={inviteUrl} className="text-xs" />
               <Button onClick={onCopy} size="icon" variant="outline" aria-label="Copy invite">
@@ -558,8 +582,8 @@ function GamePage() {
             {session.status === "finished"
               ? "Game over"
               : isMyTurn
-              ? "Your turn"
-              : "Opponent's turn"}
+                ? "Your turn"
+                : "Opponent's turn"}
           </p>
         )}
       </div>

@@ -146,8 +146,13 @@ export function applyMove(state: BgState, color: Color, mv: Move): BgState {
   if (di >= 0) dice.splice(di, 1);
 
   const next: BgState = { ...state, points, bar, off, dice };
-  if (off.white === 15) { next.winner = "white"; next.endReason = "win"; }
-  else if (off.black === 15) { next.winner = "black"; next.endReason = "win"; }
+  if (off.white === 15) {
+    next.winner = "white";
+    next.endReason = "win";
+  } else if (off.black === 15) {
+    next.winner = "black";
+    next.endReason = "win";
+  }
   return next;
 }
 

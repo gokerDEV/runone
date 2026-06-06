@@ -10,27 +10,34 @@ const DEFAULT_MESSAGES = [
   "Prepare to be crushed!",
   "Better luck next time!",
   "I'm unstoppable!",
-  "Read 'em and weep!"
+  "Read 'em and weep!",
 ];
 
 const DEFAULT_GIPHYS = [
   "https://media.giphy.com/media/l41JRsph73VokN6ik/giphy.gif",
   "https://media.giphy.com/media/26FPqAHtgCBzKG9mo/giphy.gif",
   "https://media.giphy.com/media/3o7TKSHA51OjmTGo2Q/giphy.gif",
-  "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif"
+  "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif",
 ];
 
 function randomChoice(arr: string[]) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function readProfile(): { localUserId: string; nickname: string; challengeMsg: string; giphyUrl: string } {
-  if (typeof window === "undefined") return { localUserId: "", nickname: "", challengeMsg: "", giphyUrl: "" };
+function readProfile(): {
+  localUserId: string;
+  nickname: string;
+  challengeMsg: string;
+  giphyUrl: string;
+} {
+  if (typeof window === "undefined")
+    return { localUserId: "", nickname: "", challengeMsg: "", giphyUrl: "" };
   let id = window.localStorage.getItem(USER_ID_KEY);
   if (!id) {
-    id = (typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `u_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`);
+    id =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `u_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
     window.localStorage.setItem(USER_ID_KEY, id);
   }
 
@@ -50,12 +57,17 @@ function readProfile(): { localUserId: string; nickname: string; challengeMsg: s
     localUserId: id,
     nickname: window.localStorage.getItem(NICKNAME_KEY) ?? "",
     challengeMsg,
-    giphyUrl
+    giphyUrl,
   };
 }
 
 export function useLocalProfile() {
-  const [profile, setProfile] = useState({ localUserId: "", nickname: "", challengeMsg: "", giphyUrl: "" });
+  const [profile, setProfile] = useState({
+    localUserId: "",
+    nickname: "",
+    challengeMsg: "",
+    giphyUrl: "",
+  });
 
   useEffect(() => {
     setProfile(readProfile());
@@ -85,7 +97,13 @@ export function useLocalProfile() {
     setProfile((p) => ({ ...p, giphyUrl: trimmed }));
   }, []);
 
-  return { ...profile, setNickname, setChallengeMsg, setGiphyUrl, ready: profile.localUserId !== "" };
+  return {
+    ...profile,
+    setNickname,
+    setChallengeMsg,
+    setGiphyUrl,
+    ready: profile.localUserId !== "",
+  };
 }
 
 export const getAvatarInitial = (nickname: string) =>

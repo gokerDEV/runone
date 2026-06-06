@@ -95,10 +95,11 @@ function BgPage() {
           if (arr.length > 400) arr.splice(0, arr.length - 400);
           window.sessionStorage.setItem(key, JSON.stringify(arr));
         }
-      } catch { /* noop */ }
+      } catch {
+        /* noop */
+      }
     }
   }, [session, sessionId]);
-
 
   const role: Role = useMemo(() => {
     if (!loaded) return "missing";
@@ -113,7 +114,10 @@ function BgPage() {
     role === "host" || role === "player" ? colorOf(role as "host" | "player") : null;
 
   const broadcast = useCallback(
-    async (event: "player:hello" | "state:update" | "peer:ping" | "peer:leave", payload: unknown) => {
+    async (
+      event: "player:hello" | "state:update" | "peer:ping" | "peer:leave",
+      payload: unknown,
+    ) => {
       try {
         await relayFn({ data: { sessionId, kind: "bg", event, payload } });
       } catch (e) {
@@ -129,7 +133,12 @@ function BgPage() {
 
   useChannel(loaded ? `bg-${sessionId}` : null, {
     "player:hello": (data) => {
-      const hello = data as { localUserId: string; nickname: string; challengeMsg?: string; giphyUrl?: string };
+      const hello = data as {
+        localUserId: string;
+        nickname: string;
+        challengeMsg?: string;
+        giphyUrl?: string;
+      };
       setPeerLastSeen(Date.now());
       if (!isHost) return;
       const prev = sessionRef.current;
@@ -145,7 +154,12 @@ function BgPage() {
       const nowIso = new Date().toISOString();
       const next: BgSession = {
         ...prev,
-        player: { localUserId: hello.localUserId, nickname: hello.nickname, challengeMsg: hello.challengeMsg, giphyUrl: hello.giphyUrl },
+        player: {
+          localUserId: hello.localUserId,
+          nickname: hello.nickname,
+          challengeMsg: hello.challengeMsg,
+          giphyUrl: hello.giphyUrl,
+        },
         status: "playing",
         updatedAt: nowIso,
       };
@@ -182,7 +196,16 @@ function BgPage() {
     if (helloSentRef.current) return;
     helloSentRef.current = true;
     void broadcast("player:hello", { localUserId, nickname, challengeMsg, giphyUrl });
-  }, [loaded, isHost, nickname, challengeMsg, giphyUrl, session?.player?.localUserId, localUserId, broadcast]);
+  }, [
+    loaded,
+    isHost,
+    nickname,
+    challengeMsg,
+    giphyUrl,
+    session?.player?.localUserId,
+    localUserId,
+    broadcast,
+  ]);
 
   useEffect(() => {
     if (!loaded || !session?.player || session.status === "finished") return;
@@ -202,7 +225,11 @@ function BgPage() {
   useEffect(() => {
     if (!loaded) return;
     const handler = () => {
-      try { void broadcast("peer:leave", { from: localUserId, nickname }); } catch { /* noop */ }
+      try {
+        void broadcast("peer:leave", { from: localUserId, nickname });
+      } catch {
+        /* noop */
+      }
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
@@ -243,8 +270,13 @@ function BgPage() {
   useEffect(() => {
     if (session?.status !== "finished" || !session.state.winner) return;
     const mine = myColor && session.state.winner === myColor;
-    if (mine) { sfx.win(); toast.success("You won!"); }
-    else { sfx.lose(); toast.error("You lost"); }
+    if (mine) {
+      sfx.win();
+      toast.success("You won!");
+    } else {
+      sfx.lose();
+      toast.error("You lost");
+    }
     const t = window.setTimeout(() => {
       void navigate({ to: "/replay", search: { s: sessionId } });
     }, 1400);
@@ -267,7 +299,8 @@ function BgPage() {
     return session.state.turn === myColor;
   }, [session, myColor]);
 
-  const canOffer = !!session && !!myColor && canOfferDoubleFn(session.state, myColor) && !!session.player;
+  const canOffer =
+    !!session && !!myColor && canOfferDoubleFn(session.state, myColor) && !!session.player;
   const adv = useMemo(() => (session ? advantage(session.state) : 0.5), [session]);
 
   const pushState = useCallback(
@@ -298,7 +331,10 @@ function BgPage() {
     }
     const nowIso = new Date().toISOString();
     const next: BgSession = { ...session, state: ns, updatedAt: nowIso };
-    if (ns.winner) { next.status = "finished"; next.finishedAt = nowIso; }
+    if (ns.winner) {
+      next.status = "finished";
+      next.finishedAt = nowIso;
+    }
     pushState(next);
   }
 
@@ -325,7 +361,13 @@ function BgPage() {
     if (!session) return;
     const ns = declineDouble(session.state);
     const nowIso = new Date().toISOString();
-    pushState({ ...session, state: ns, status: ns.winner ? "finished" : session.status, finishedAt: ns.winner ? nowIso : session.finishedAt, updatedAt: nowIso });
+    pushState({
+      ...session,
+      state: ns,
+      status: ns.winner ? "finished" : session.status,
+      finishedAt: ns.winner ? nowIso : session.finishedAt,
+      updatedAt: nowIso,
+    });
   }
 
   const inviteUrl = typeof window !== "undefined" ? `${window.location.origin}/b/${sessionId}` : "";
@@ -336,7 +378,9 @@ function BgPage() {
       sfx.copy();
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
   }
 
   function onConfirmExit() {
@@ -359,9 +403,19 @@ function BgPage() {
           <h2 className="text-xl font-semibold">Join the match</h2>
           <div className="w-full flex flex-col gap-2">
             <Label htmlFor="nick">Nickname</Label>
-            <Input id="nick" value={draftName} onChange={(e) => setDraftName(e.target.value)} maxLength={24} placeholder="Your nickname" />
+            <Input
+              id="nick"
+              value={draftName}
+              onChange={(e) => setDraftName(e.target.value)}
+              maxLength={24}
+              placeholder="Your nickname"
+            />
           </div>
-          <Button disabled={!draftName.trim()} className="w-full" onClick={() => setNickname(draftName)}>
+          <Button
+            disabled={!draftName.trim()}
+            className="w-full"
+            onClick={() => setNickname(draftName)}
+          >
             Continue
           </Button>
         </div>
@@ -418,14 +472,18 @@ function BgPage() {
       <div className="flex-1 flex flex-col items-center justify-start px-2 py-4 overflow-hidden">
         {waiting && isHost ? (
           <div className="w-full max-w-xs flex flex-col gap-3 items-center px-4 mt-8">
-            <p className="text-sm text-muted-foreground text-center">Share this link to invite a friend</p>
+            <p className="text-sm text-muted-foreground text-center">
+              Share this link to invite a friend
+            </p>
             <div className="w-full flex gap-2">
               <Input readOnly value={inviteUrl} className="text-xs" />
               <Button onClick={onCopy} size="icon" variant="outline" aria-label="Copy invite">
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="text-[11px] text-muted-foreground text-center">Keep this tab open — closing it ends the match.</p>
+            <p className="text-[11px] text-muted-foreground text-center">
+              Keep this tab open — closing it ends the match.
+            </p>
           </div>
         ) : (
           <div className="w-full max-w-xl mx-auto px-2">
@@ -449,11 +507,16 @@ function BgPage() {
               {session.status === "finished"
                 ? "Game over"
                 : isMyTurn
-                  ? session.state.rolled ? "Your turn — move" : "Your turn — roll or double"
+                  ? session.state.rolled
+                    ? "Your turn — move"
+                    : "Your turn — roll or double"
                   : "Opponent's turn"}
             </p>
             {session.status === "finished" && (
-              <Button onClick={() => void navigate({ to: "/replay", search: { s: sessionId } })} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-2 rounded-full shadow-lg">
+              <Button
+                onClick={() => void navigate({ to: "/replay", search: { s: sessionId } })}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-2 rounded-full shadow-lg"
+              >
                 <Download className="w-4 h-4 mr-2" /> Export Replay Video
               </Button>
             )}
@@ -470,7 +533,8 @@ function BgPage() {
           <div className="bg-background rounded-xl p-5 w-full max-w-xs text-center shadow-2xl">
             <h3 className="text-lg font-semibold">Double offered</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Opponent doubles to {session.state.cube.value * 2}. Accept or resign at {session.state.cube.value}?
+              Opponent doubles to {session.state.cube.value * 2}. Accept or resign at{" "}
+              {session.state.cube.value}?
             </p>
             <div className="mt-4 flex gap-2">
               <Button variant="outline" className="flex-1" onClick={handleDeclineDouble}>
@@ -488,8 +552,6 @@ function BgPage() {
     </GameFrame>
   );
 }
-
-
 
 function CenterMessage({ children }: { children: React.ReactNode }) {
   return (

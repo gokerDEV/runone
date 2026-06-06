@@ -17,9 +17,15 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "play.withme — Play with ME" },
-      { name: "description", content: "Play Tic Tac Toe or Backgammon with a friend and share a vertical replay video." },
+      {
+        name: "description",
+        content: "Play Tic Tac Toe or Backgammon with a friend and share a vertical replay video.",
+      },
       { property: "og:title", content: "play.withme" },
-      { property: "og:description", content: "Play with ME — multiplayer board games with shareable replays." },
+      {
+        property: "og:description",
+        content: "Play with ME — multiplayer board games with shareable replays.",
+      },
     ],
   }),
   component: Landing,
@@ -32,7 +38,16 @@ function newSessionId(): string {
 type GameKind = "tic-tac-toe" | "backgammon";
 
 function Landing() {
-  const { nickname, setNickname, challengeMsg, setChallengeMsg, giphyUrl, setGiphyUrl, localUserId, ready } = useLocalProfile();
+  const {
+    nickname,
+    setNickname,
+    challengeMsg,
+    setChallengeMsg,
+    giphyUrl,
+    setGiphyUrl,
+    localUserId,
+    ready,
+  } = useLocalProfile();
   const [draftName, setDraftName] = useState("");
   const [gameKind, setGameKind] = useState<GameKind>("tic-tac-toe");
   const [timed, setTimed] = useState<"untimed" | "timed">("untimed");
@@ -65,7 +80,9 @@ function Landing() {
       try {
         localStorage.setItem(`pwm:host:${sessionId}`, "1");
         localStorage.setItem(`pwm:session:${sessionId}`, JSON.stringify(session));
-      } catch { /* noop */ }
+      } catch {
+        /* noop */
+      }
       void navigate({ to: "/g/$sessionId", params: { sessionId } });
     } else {
       const session: BgSession = {
@@ -80,7 +97,9 @@ function Landing() {
       try {
         localStorage.setItem(`pwm:bg-host:${sessionId}`, "1");
         localStorage.setItem(`pwm:bg-session:${sessionId}`, JSON.stringify(session));
-      } catch { /* noop */ }
+      } catch {
+        /* noop */
+      }
       void navigate({ to: "/b/$sessionId", params: { sessionId } });
     }
   }
@@ -96,11 +115,15 @@ function Landing() {
         {ready ? (
           <div className="bg-white/5 rounded-2xl p-5 flex flex-col gap-4 border border-white/10">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="nick" className="text-white/80">Nickname</Label>
+              <Label htmlFor="nick" className="text-white/80">
+                Nickname
+              </Label>
               <Input
                 id="nick"
                 value={nickname || draftName}
-                onChange={(e) => (nickname ? setNickname(e.target.value) : setDraftName(e.target.value))}
+                onChange={(e) =>
+                  nickname ? setNickname(e.target.value) : setDraftName(e.target.value)
+                }
                 placeholder="Enter your nickname"
                 className="bg-white/10 border-white/20 text-white"
                 maxLength={24}
@@ -108,7 +131,9 @@ function Landing() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="challengeMsg" className="text-white/80">Challenge Message</Label>
+              <Label htmlFor="challengeMsg" className="text-white/80">
+                Challenge Message
+              </Label>
               <Input
                 id="challengeMsg"
                 value={challengeMsg}
@@ -120,7 +145,9 @@ function Landing() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="giphyUrl" className="text-white/80">Victory Giphy URL</Label>
+              <Label htmlFor="giphyUrl" className="text-white/80">
+                Victory Giphy URL
+              </Label>
               <Input
                 id="giphyUrl"
                 value={giphyUrl}

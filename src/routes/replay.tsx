@@ -17,7 +17,7 @@ export const Route = createFileRoute("/replay")({
   validateSearch: (search: Record<string, unknown>) => {
     return {
       s: search.s as string | undefined,
-    }
+    };
   },
   component: ReplayPage,
 });
@@ -42,10 +42,18 @@ function ReplayPage() {
     const rawSess = localStorage.getItem(`pwm:bg-session:${sessionId}`);
     const rawSnaps = sessionStorage.getItem(`pwm:bg-snaps:${sessionId}`);
     if (rawSess) {
-      try { setSessionData(JSON.parse(rawSess) as BgSession); } catch {}
+      try {
+        setSessionData(JSON.parse(rawSess) as BgSession);
+      } catch {
+        /* ignore */
+      }
     }
     if (rawSnaps) {
-      try { setSnaps(JSON.parse(rawSnaps) as BgState[]); } catch {}
+      try {
+        setSnaps(JSON.parse(rawSnaps) as BgState[]);
+      } catch {
+        /* ignore */
+      }
     }
   }, [sessionId]);
 
@@ -54,7 +62,7 @@ function ReplayPage() {
       const winnerColor = sessionData.state.winner || "white";
       const host = sessionData.host;
       const player = sessionData.player;
-      
+
       return {
         metadata: {
           winner: winnerColor,
@@ -67,23 +75,26 @@ function ReplayPage() {
         },
         events: [],
         snapshots: snaps,
-        isReal: true
+        isReal: true,
       };
     }
-    
+
     return {
-      metadata: sampleRecord.metadata as any,
+      metadata: sampleRecord.metadata as Record<string, string>,
       events: sampleRecord.events,
       snapshots: [],
-      isReal: false
+      isReal: false,
     };
   }, [sessionData, snaps]);
 
   const winnerColor = record.metadata.winner as Color;
-  const winnerName = winnerColor === "white" ? record.metadata.whitePlayer : record.metadata.blackPlayer;
-  const winnerMessage = winnerColor === "white" ? record.metadata.whiteMessage : record.metadata.blackMessage;
+  const winnerName =
+    winnerColor === "white" ? record.metadata.whitePlayer : record.metadata.blackPlayer;
+  const winnerMessage =
+    winnerColor === "white" ? record.metadata.whiteMessage : record.metadata.blackMessage;
   const winnerGif = winnerColor === "white" ? record.metadata.whiteGif : record.metadata.blackGif;
-  const loserName = winnerColor === "white" ? record.metadata.blackPlayer : record.metadata.whitePlayer;
+  const loserName =
+    winnerColor === "white" ? record.metadata.blackPlayer : record.metadata.whitePlayer;
 
   const adv = useMemo(() => advantage(state), [state]);
   const totalEvents = record.isReal ? record.snapshots.length : record.events.length;
@@ -104,7 +115,7 @@ function ReplayPage() {
           const snap = record.snapshots[eventIdx];
           if (snap) setState(snap);
         } else {
-          const ev = record.events[eventIdx] as any;
+          const ev = record.events[eventIdx] as Record<string, unknown>;
           setState((prev) => {
             if (ev.type === "roll") {
               return { ...prev, dice: ev.dice, turn: ev.color, rolled: true };
@@ -118,12 +129,12 @@ function ReplayPage() {
           });
         }
 
-        setEventIdx(idx => idx + 1);
+        setEventIdx((idx) => idx + 1);
       }, delayMs);
 
       return () => clearTimeout(t);
     }
-  }, [phase, eventIdx, totalEvents, delayMs, isExporting, isPlaying]);
+  }, [phase, eventIdx, totalEvents, delayMs, isExporting, isPlaying, record]);
 
   function handleRestart() {
     setState(startingState());
@@ -146,7 +157,7 @@ function ReplayPage() {
     setExportProgress(0);
 
     // Wait for React to unmount controls and DOM to expand to 9:16 layout
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 200));
 
     try {
       const baseWidth = containerRef.current.offsetWidth || 400;
@@ -161,11 +172,11 @@ function ReplayPage() {
       const muxer = new Muxer({
         target: new ArrayBufferTarget(),
         video: {
-          codec: 'avc',
+          codec: "avc",
           width: outW,
           height: outH,
         },
-        fastStart: 'in-memory',
+        fastStart: "in-memory",
       });
 
       const videoEncoder = new VideoEncoder({
@@ -174,7 +185,7 @@ function ReplayPage() {
       });
 
       videoEncoder.configure({
-        codec: 'avc1.420028',
+        codec: "avc1.420028",
         width: outW,
         height: outH,
         bitrate: 5_000_000,
@@ -185,12 +196,14 @@ function ReplayPage() {
       const delayUs = Math.floor((targetDuration * 1000 * 1000) / Math.max(1, totalEvents));
 
       // Reset game state for export
-      let simState: BgState = record.isReal ? (record.snapshots[0] || startingState()) : startingState();
+      let simState: BgState = record.isReal
+        ? record.snapshots[0] || startingState()
+        : startingState();
       setState(simState);
       setEventIdx(0);
       setPhase("playing");
 
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 100));
 
       let lastBoardCanvas: HTMLCanvasElement | null = null;
 
@@ -205,8 +218,8 @@ function ReplayPage() {
           pixelRatio: scale,
           style: {
             margin: "0",
-            padding: "0"
-          }
+            padding: "0",
+          },
         });
         lastBoardCanvas = canvas;
 
@@ -219,9 +232,16 @@ function ReplayPage() {
         if (record.isReal) {
           simState = record.snapshots[i] || simState;
         } else {
-          const ev = record.events[i] as any;
-          if (ev.type === "roll") simState = { ...simState, dice: ev.dice, turn: ev.color, rolled: true };
-          else if (ev.type === "move") simState = applyMove(simState, ev.color, ev.move);
+          const ev = record.events[i] as Record<string, unknown>;
+          if (ev.type === "roll")
+            simState = {
+              ...simState,
+              dice: ev.dice as number[],
+              turn: ev.color as Color,
+              rolled: true,
+            };
+          else if (ev.type === "move")
+            simState = applyMove(simState, ev.color as Color, ev.move as Move);
           else if (ev.type === "endTurn") simState = endTurn(simState);
         }
 
@@ -229,12 +249,12 @@ function ReplayPage() {
         setEventIdx(i + 1);
 
         await new Promise(requestAnimationFrame);
-        await new Promise(r => setTimeout(r, 5));
+        await new Promise((r) => setTimeout(r, 5));
       }
 
       // 2. Render Outro screen manually to capture GIF animation
       setPhase("outro");
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200));
 
       const vidEl = document.getElementById("winner-video") as HTMLVideoElement;
       if (vidEl && vidEl.readyState < 2) {
@@ -244,7 +264,7 @@ function ReplayPage() {
           setTimeout(res, 2000); // 2s timeout
         });
       }
-      if (vidEl) vidEl.play().catch(e => console.error("play failed", e));
+      if (vidEl) vidEl.play().catch((e) => console.error("play failed", e));
 
       const outroFrames = 30 * 4; // 4 seconds at 30fps
       const outroDelayUs = 1_000_000 / 30;
@@ -293,13 +313,18 @@ function ReplayPage() {
             ctx.shadowBlur = 20;
             ctx.shadowOffsetY = 10;
             ctx.fillStyle = "#e5e7eb";
-            ctx.fillRect(outW / 2 - finalW / 2 - (4 * scaleMult), drawY - (4 * scaleMult), finalW + (8 * scaleMult), finalH + (8 * scaleMult));
+            ctx.fillRect(
+              outW / 2 - finalW / 2 - 4 * scaleMult,
+              drawY - 4 * scaleMult,
+              finalW + 8 * scaleMult,
+              finalH + 8 * scaleMult,
+            );
 
             ctx.shadowColor = "transparent";
             ctx.shadowBlur = 0;
             ctx.drawImage(vidEl, outW / 2 - finalW / 2, drawY, finalW, finalH);
 
-            textY = drawY + finalH + (40 * scaleMult);
+            textY = drawY + finalH + 40 * scaleMult;
           }
 
           ctx.font = `italic 500 ${20 * scaleMult}px sans-serif`;
@@ -312,24 +337,23 @@ function ReplayPage() {
         frame.close();
         timestampUs += outroDelayUs;
 
-        await new Promise(r => setTimeout(r, 33));
+        await new Promise((r) => setTimeout(r, 33));
       }
 
       await videoEncoder.flush();
       muxer.finalize();
 
       const { buffer } = muxer.target as ArrayBufferTarget;
-      const blob = new Blob([buffer], { type: 'video/mp4' });
+      const blob = new Blob([buffer], { type: "video/mp4" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `backgammon-export-${Date.now()}.mp4`;
       a.click();
       URL.revokeObjectURL(url);
-
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      alert("Export failed: " + e.message);
+      alert("Export failed: " + (e instanceof Error ? e.message : String(e)));
     } finally {
       setIsExporting(false);
       setExportProgress(0);
@@ -346,9 +370,11 @@ function ReplayPage() {
   return (
     <GameFrame>
       <div className="flex-1 flex flex-col pt-0 relative overflow-hidden bg-background">
-
         {/* VIDEO RECORDING AREA */}
-        <div ref={containerRef} className="flex-1 flex flex-col pt-0 relative bg-background overflow-hidden">
+        <div
+          ref={containerRef}
+          className="flex-1 flex flex-col pt-0 relative bg-background overflow-hidden"
+        >
           <GameHeader
             whitePlayer={record.metadata.whitePlayer}
             whiteStatus="connected"
@@ -371,11 +397,11 @@ function ReplayPage() {
                 state={state}
                 myColor="white"
                 selected={null}
-                onSelect={() => { }}
-                onApply={() => { }}
-                onRoll={() => { }}
-                onEndTurn={() => { }}
-                onOfferDouble={() => { }}
+                onSelect={() => {}}
+                onApply={() => {}}
+                onRoll={() => {}}
+                onEndTurn={() => {}}
+                onOfferDouble={() => {}}
                 isMyTurn={false}
                 canOffer={false}
               />
@@ -392,10 +418,24 @@ function ReplayPage() {
                   Loser: {loserName}
                 </h2>
               </div>
-              <video id="winner-video" crossOrigin="anonymous" src={winnerVideoUrl} autoPlay loop muted playsInline className="w-full max-w-sm rounded-xl shadow-2xl border-4 border-muted object-cover" />
+              <video
+                id="winner-video"
+                crossOrigin="anonymous"
+                src={winnerVideoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full max-w-sm rounded-xl shadow-2xl border-4 border-muted object-cover"
+              />
               <p className="text-xl font-medium italic text-center px-4">"{winnerMessage}"</p>
               {!isExporting && (
-                <Button variant="secondary" size="sm" onClick={togglePlay} className="mt-4 h-8 text-xs px-4">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={togglePlay}
+                  className="mt-4 h-8 text-xs px-4"
+                >
                   <Play className="w-3 h-3 mr-1" />
                   Watch Again
                 </Button>
@@ -406,7 +446,10 @@ function ReplayPage() {
           {/* Export Progress Bar directly inside recorded area at bottom */}
           {isExporting && (
             <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-muted">
-              <div className="h-full bg-[#34d399] transition-all duration-75" style={{ width: `${exportProgress * 100}%` }} />
+              <div
+                className="h-full bg-[#34d399] transition-all duration-75"
+                style={{ width: `${exportProgress * 100}%` }}
+              />
             </div>
           )}
         </div>
@@ -415,17 +458,40 @@ function ReplayPage() {
         {!isExporting && (
           <div className="p-4 w-full flex flex-col gap-3 items-center shrink-0 bg-background border-t">
             <div className="flex gap-1 text-[10px] bg-muted/50 rounded-full px-2 py-0.5 border">
-              <button onClick={() => setTargetDuration(15)} className={`px-2 py-0.5 rounded ${targetDuration === 15 ? "bg-background shadow-sm text-foreground font-bold" : "text-muted-foreground"}`}>15s</button>
-              <button onClick={() => setTargetDuration(30)} className={`px-2 py-0.5 rounded ${targetDuration === 30 ? "bg-background shadow-sm text-foreground font-bold" : "text-muted-foreground"}`}>30s</button>
-              <button onClick={() => setTargetDuration(45)} className={`px-2 py-0.5 rounded ${targetDuration === 45 ? "bg-background shadow-sm text-foreground font-bold" : "text-muted-foreground"}`}>45s</button>
+              <button
+                onClick={() => setTargetDuration(15)}
+                className={`px-2 py-0.5 rounded ${targetDuration === 15 ? "bg-background shadow-sm text-foreground font-bold" : "text-muted-foreground"}`}
+              >
+                15s
+              </button>
+              <button
+                onClick={() => setTargetDuration(30)}
+                className={`px-2 py-0.5 rounded ${targetDuration === 30 ? "bg-background shadow-sm text-foreground font-bold" : "text-muted-foreground"}`}
+              >
+                30s
+              </button>
+              <button
+                onClick={() => setTargetDuration(45)}
+                className={`px-2 py-0.5 rounded ${targetDuration === 45 ? "bg-background shadow-sm text-foreground font-bold" : "text-muted-foreground"}`}
+              >
+                45s
+              </button>
             </div>
 
             <div className="w-full bg-muted h-2 rounded-full overflow-hidden relative">
-              <div className="bg-[#0a84ff] h-full transition-all duration-300 ease-linear" style={{ width: `${(eventIdx / totalEvents) * 100}%` }} />
+              <div
+                className="bg-[#0a84ff] h-full transition-all duration-300 ease-linear"
+                style={{ width: `${(eventIdx / totalEvents) * 100}%` }}
+              />
             </div>
 
             <div className="flex w-full justify-between items-center px-1">
-              <Button variant="secondary" size="sm" onClick={togglePlay} className="h-8 text-xs px-3">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={togglePlay}
+                className="h-8 text-xs px-3"
+              >
                 {isPlaying ? <Pause className="w-3 h-3 mr-1" /> : <Play className="w-3 h-3 mr-1" />}
                 {isPlaying ? "Pause" : eventIdx === 0 ? "Play" : "Resume"}
               </Button>
@@ -434,7 +500,12 @@ function ReplayPage() {
                 {`Frame ${eventIdx}/${totalEvents}`}
               </p>
 
-              <Button variant="default" size="sm" onClick={handleExport} className="h-8 text-xs px-3 bg-[#0a84ff] hover:bg-[#0a84ff]/90">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleExport}
+                className="h-8 text-xs px-3 bg-[#0a84ff] hover:bg-[#0a84ff]/90"
+              >
                 <Download className="w-3 h-3 mr-1" />
                 Export
               </Button>

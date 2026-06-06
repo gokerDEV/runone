@@ -79,17 +79,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Run One" },
-      { name: "description", content: "Connects to MongoDB using a connection string for data management." },
+      {
+        name: "description",
+        content: "Connects to MongoDB using a connection string for data management.",
+      },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Run One" },
-      { property: "og:description", content: "Connects to MongoDB using a connection string for data management." },
+      {
+        property: "og:description",
+        content: "Connects to MongoDB using a connection string for data management.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Run One" },
-      { name: "twitter:description", content: "Connects to MongoDB using a connection string for data management." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83310a59-840b-4bfa-bc8f-9a7c5d9c59ce/id-preview-57d69a42--6b86b4e3-9531-4a73-bb30-45e6f148e6ca.lovable.app-1780343034242.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83310a59-840b-4bfa-bc8f-9a7c5d9c59ce/id-preview-57d69a42--6b86b4e3-9531-4a73-bb30-45e6f148e6ca.lovable.app-1780343034242.png" },
+      {
+        name: "twitter:description",
+        content: "Connects to MongoDB using a connection string for data management.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83310a59-840b-4bfa-bc8f-9a7c5d9c59ce/id-preview-57d69a42--6b86b4e3-9531-4a73-bb30-45e6f148e6ca.lovable.app-1780343034242.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83310a59-840b-4bfa-bc8f-9a7c5d9c59ce/id-preview-57d69a42--6b86b4e3-9531-4a73-bb30-45e6f148e6ca.lovable.app-1780343034242.png",
+      },
     ],
     links: [
       {

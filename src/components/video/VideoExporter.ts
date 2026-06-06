@@ -71,7 +71,14 @@ function drawAvatar(
 }
 
 function drawPlayers(ctx: CanvasRenderingContext2D, session: GameSession) {
-  drawAvatar(ctx, (session.host.nickname[0] ?? "?").toUpperCase(), session.host.nickname, 260, 280, "#6366f1");
+  drawAvatar(
+    ctx,
+    (session.host.nickname[0] ?? "?").toUpperCase(),
+    session.host.nickname,
+    260,
+    280,
+    "#6366f1",
+  );
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "700 56px Inter, system-ui, sans-serif";
   ctx.textAlign = "center";
@@ -182,7 +189,10 @@ export async function exportReplayVideo(opts: ExportOptions): Promise<{ blob: Bl
 
   // Total duration ~14s
   const SCENE_OPEN = 2500;
-  const PER_MOVE = Math.max(500, Math.min(1100, Math.floor(10_000 / Math.max(1, opts.moves.length))));
+  const PER_MOVE = Math.max(
+    500,
+    Math.min(1100, Math.floor(10_000 / Math.max(1, opts.moves.length))),
+  );
   const REPLAY = opts.moves.length * PER_MOVE;
   const SCENE_LOSER = 2500;
   const SCENE_END = 1800;

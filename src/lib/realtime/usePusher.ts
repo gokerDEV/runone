@@ -31,7 +31,7 @@ export function useChannel(channelName: string | null, handlers: Record<string, 
     if (!channelName) return;
     let channel: Channel | null = null;
     let cancelled = false;
-    let bound: Array<[string, (data: unknown) => void]> = [];
+    const bound: Array<[string, (data: unknown) => void]> = [];
 
     void getClient().then((client) => {
       if (cancelled || !client) return;

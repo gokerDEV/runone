@@ -74,7 +74,15 @@ function drawAvatar(
 }
 
 function drawPlayers(ctx: CanvasRenderingContext2D, session: BgSession) {
-  drawAvatar(ctx, (session.host.nickname[0] ?? "?").toUpperCase(), session.host.nickname, 230, 270, "#e5e7eb", "WHITE");
+  drawAvatar(
+    ctx,
+    (session.host.nickname[0] ?? "?").toUpperCase(),
+    session.host.nickname,
+    230,
+    270,
+    "#e5e7eb",
+    "WHITE",
+  );
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "700 56px Inter, system-ui, sans-serif";
   ctx.textAlign = "center";
@@ -91,7 +99,13 @@ function drawPlayers(ctx: CanvasRenderingContext2D, session: BgSession) {
   );
 }
 
-function drawChecker(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: "white" | "black") {
+function drawChecker(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  r: number,
+  color: "white" | "black",
+) {
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = color === "white" ? "#f5f5f4" : "#0c0a09";
@@ -128,7 +142,8 @@ function drawBoard(ctx: CanvasRenderingContext2D, state: BgState) {
   function pointRect(idx: number) {
     const top = idx >= 12;
     let col: number;
-    if (top) col = idx - 12; // 0..11
+    if (top)
+      col = idx - 12; // 0..11
     else col = 11 - idx; // 0..11
     const leftHalf = col < 6;
     const colInHalf = leftHalf ? col : col - 6;
@@ -164,9 +179,7 @@ function drawBoard(ctx: CanvasRenderingContext2D, state: BgState) {
     const { px, py, top } = pointRect(idx);
     const max = Math.min(p.count, 5);
     for (let i = 0; i < max; i++) {
-      const cy = top
-        ? py + cr + i * (cr * 2 + 2)
-        : py + pointH - cr - i * (cr * 2 + 2);
+      const cy = top ? py + cr + i * (cr * 2 + 2) : py + pointH - cr - i * (cr * 2 + 2);
       drawChecker(ctx, px + pointW / 2, cy, cr, p.color);
     }
     if (p.count > 5) {
@@ -226,7 +239,11 @@ function drawBoard(ctx: CanvasRenderingContext2D, state: BgState) {
   ctx.textBaseline = "top";
   ctx.fillText(`Off W: ${state.off.white}   Off B: ${state.off.black}`, x0, y0 + boardH + 16);
   ctx.textAlign = "right";
-  ctx.fillText(`Cube ${state.cube.value}×   Turn: ${state.turn.toUpperCase()}`, x0 + boardW, y0 + boardH + 16);
+  ctx.fillText(
+    `Cube ${state.cube.value}×   Turn: ${state.turn.toUpperCase()}`,
+    x0 + boardW,
+    y0 + boardH + 16,
+  );
 }
 
 function drawMessage(ctx: CanvasRenderingContext2D, message: string, color: string) {
@@ -255,7 +272,9 @@ function drawEndScreen(ctx: CanvasRenderingContext2D, alpha: number) {
   }
 }
 
-export async function exportBackgammonVideo(opts: BgExportOptions): Promise<{ blob: Blob; ext: string }> {
+export async function exportBackgammonVideo(
+  opts: BgExportOptions,
+): Promise<{ blob: Blob; ext: string }> {
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;

@@ -17,8 +17,8 @@ export async function pusherTrigger(channel: string, event: string, data: unknow
   const config = cfg();
   if (!config) {
     console.warn("Config not found");
-    return
-  };
+    return;
+  }
   const { appId, key, secret, cluster } = config;
   const body = JSON.stringify({
     name: event,

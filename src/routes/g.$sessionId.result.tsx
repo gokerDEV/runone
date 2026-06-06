@@ -141,10 +141,10 @@ function ResultPage() {
     outcome === "win"
       ? "You won!"
       : outcome === "loss"
-      ? "You lost!"
-      : outcome === "draw"
-      ? "Draw game!"
-      : "Match finished";
+        ? "You lost!"
+        : outcome === "draw"
+          ? "Draw game!"
+          : "Match finished";
 
   return (
     <GameFrame>
@@ -157,7 +157,9 @@ function ResultPage() {
       <div className="grid grid-cols-3 items-center px-4 pt-2">
         <div className="flex flex-col items-center gap-1">
           <Avatar nickname={session.host.nickname} tone="host" />
-          <span className="text-xs font-semibold truncate max-w-[100px]">{session.host.nickname}</span>
+          <span className="text-xs font-semibold truncate max-w-[100px]">
+            {session.host.nickname}
+          </span>
         </div>
         <div className="text-center text-muted-foreground text-sm font-bold">VS</div>
         <div className="flex flex-col items-center gap-1">
@@ -215,7 +217,11 @@ function ResultPage() {
           {exporting ? "Preparing…" : "Export as Video"}
         </Button>
         {downloadUrl && (
-          <a href={downloadUrl} download={`play-withme-${sessionId}.mp4`} className="text-xs underline text-muted-foreground">
+          <a
+            href={downloadUrl}
+            download={`play-withme-${sessionId}.mp4`}
+            className="text-xs underline text-muted-foreground"
+          >
             Download again
           </a>
         )}
