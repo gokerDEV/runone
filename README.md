@@ -32,14 +32,12 @@ The UI design and development workflow for the Backgammon board involves a colla
 
 ## Vercel Deployment
 
-Since this project uses `@lovable.dev/vite-tanstack-config`, the build engine (Nitro) defaults to targeting **Cloudflare** by default. To successfully deploy this application to **Vercel** as a TanStack Start project, you **must** configure the following settings in your Vercel project dashboard:
+This project uses `@lovable.dev/vite-tanstack-config` which defaults to Cloudflare. However, `vite.config.ts` has been specifically updated to support Vercel's Build Output API.
 
-1. **Framework Preset:** Select `TanStack Start` (or `Vite` if TanStack Start is missing, though Vercel usually auto-detects it).
-2. **Build Command:** `npm run build` (veya `bun run build`)
-3. **Output Directory:** Leave as default, or set to `.vercel/output` (Nitro automatically builds into the Vercel Build Output API format when the vercel preset is active).
-4. **Environment Variables (CRITICAL):**
-   You **must** add the following environment variable in your Vercel Project Settings -> Environment Variables:
-   - Key: `NITRO_PRESET`
-   - Value: `vercel`
+To deploy this application to **Vercel**, use the following settings in your Vercel project dashboard:
 
-Setting `NITRO_PRESET=vercel` forces the underlying Nitro engine to compile the server code for Vercel Serverless/Edge functions instead of Cloudflare Pages, resolving any "Not Found" or 404 deployment errors.
+1. **Framework Preset:** Select `Vite` (Vercel may auto-detect TanStack Start, which is fine, but Vite is safer to let the custom config handle it).
+2. **Build Command:** `npm run build` (or `bun run build`)
+3. **Output Directory:** Leave as default or empty. Our `vite.config.ts` explicitly creates the required `.vercel/output` folder.
+
+You do **not** need to set `NITRO_PRESET` anymore, as it is hardcoded in the configuration.
